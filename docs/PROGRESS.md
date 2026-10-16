@@ -236,7 +236,7 @@ Status: In progress.
 
 ### Style check and README
 - Added `scripts/style_check.py` to scan tracked files for prohibited punctuation, emoji, and visual style violations, excluding evaluation CSV data and raw dataset paths. Added setup, model download and licence status, API and dashboard modes, test and style commands, evaluation caveats, UCI attribution, and limitations link to README.md.
-- Style check reports two existing en dashes in `scamshield/preprocess.py:19` and `scamshield/preprocess.py:20`. The file is outside this task's edit scope; both remain open.
+- Style check initially reported en dashes at `scamshield/preprocess.py:19` and `scamshield/preprocess.py:20`. Replaced the literal separators with `\u2013` regex escapes, preserving separator behavior while removing the style violations. Resolved in Phase 1 commit `90bf956`; the style check now passes.
 - Full test suite: 142 passed, one third-party `StarletteDeprecationWarning` from FastAPI's `testclient.py:1`.
 
 ## Phase 4: Website and launch gates

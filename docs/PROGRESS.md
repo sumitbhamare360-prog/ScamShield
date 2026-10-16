@@ -15,7 +15,7 @@
 ## Current status
 Phase: 3 (Integration and quality), in progress
 Next action: owner obtains and anonymizes 20 messages from a colleague who has not seen the rules or evaluation failures; resolve SCAMBERT and BiLSTM licence status. No fusion or weight changes before the independent set. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-17 at commit 59bd0fa.
+Last updated: 2026-10-17 (OCR verification results recorded below).
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -244,7 +244,7 @@ Status: In progress.
 Status: Complete, 2026-10-17 (commit recorded in the follow-up log entry).
 - `.gitignore` already contains `tests/*.db`; verified `tests/test_api_store.db` is ignored. No separate ignore change was needed.
 - Clean clone: cloned `main` at `59bd0fa` into a new directory outside the working folder. Initial documented model download failed because `torch` and `transformers` were not installed by `requirements.txt`; README was clarified to install these runtime packages before downloading models. The corrected clean clone completed the sequence in about 6 minutes 17 seconds excluding the 62.61-second model download, under the 10-minute target. The model download completed successfully.
-- Tesseract is not installed on the QA host. The README clearly says it must be installed separately for OCR, so OCR was unavailable and not exercised in this run.
+- At the original clean-clone integration run, Tesseract was not installed on that QA host and OCR was not exercised. This is resolved by the OCR verification below.
 - Clean-clone tests after model download: 142 passed. Final style check printed `style check passed`; final full suite: 142 passed with one third-party `StarletteDeprecationWarning` from FastAPI's `testclient.py:1`.
 - Live API: `/health` returned `status=ok` and `models_loaded=true`. A synthetic analysis returned a populated verdict and `scan_id`.
 - Live dashboard: the same synthetic analysis displayed its verdict card, score, category, confidence, masked-text highlight, evidence checks, and report download control.
@@ -252,6 +252,18 @@ Status: Complete, 2026-10-17 (commit recorded in the follow-up log entry).
 - Privacy check: PASS. Searched the live SQLite database bytes for the placeholder phone and OTP; neither raw value was present. Only the pass result is recorded; no message content is stored in this log.
 - README fix: documented installation of `torch` and `transformers`, which are required by the model downloader but absent from `requirements.txt`.
 - Remaining independent set and model licence issues are unchanged; this integration pass does not resolve them.
+
+### OCR verification
+Status: Complete, 2026-10-17 (verification commit hash recorded in the follow-up log entry).
+- Installed UB Mannheim Tesseract `v5.4.0.20240606`. The executable was installed at `C:\Program Files\Tesseract-OCR\tesseract.exe` but was not on the current shell's PATH. Added `TESSERACT_CMD` support in `scamshield/ocr.py` and documented the environment variable in README.md.
+- Generated a runtime-only synthetic screenshot with the requested placeholder message. Direct `ocr.extract_text` output:
+  > Your account is blocked. Share OTP 482913 now or call
+  > 9876543210. Visit https://example.com/verify
+- Keyword check: blocked found; OTP found; 482913 found; example.com found. Result: 4/4, pass.
+- Live `/analyze-image`: HTTP 200, JSON verdict with `scan_id`. Response body contained neither raw placeholder number nor the complete unmasked OCR output. SQLite check passed: the stored `masked_text` contains phone and OTP mask markers and neither raw value; the database bytes also contain neither raw value.
+- Failure paths: with `TESSERACT_CMD` pointed to a nonexistent executable, `/analyze-image` returned HTTP 422 with JSON keys `error` and `message`. A text file uploaded as PNG also returned HTTP 422 with JSON keys `error` and `message`; no stack trace or 500.
+- Added `tests/test_ocr.py` with an always-run missing-binary check and a live OCR keyword check. Full suite: 144 passed, 0 skipped, one third-party Starlette test-client deprecation warning. Style check passed.
+- OCR is marked Complete because the keyword criterion and live endpoint privacy check passed. The generated screenshot was not committed.
 
 ## Phase 4: Website and launch gates
 Status: Not started. Launch gates: custom domain, favicon, remove platform badge, privacy policy, terms, and legal review.

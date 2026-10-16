@@ -16,7 +16,7 @@ The model runtime packages are not included in `requirements.txt`. Install them 
 pip install torch transformers
 ```
 
-Image OCR requires Tesseract to be installed separately and available on the system `PATH`.
+Image OCR requires Tesseract to be installed separately. Put it on `PATH`, or set `TESSERACT_CMD` to the full path of the executable (for example, `C:\Program Files\Tesseract-OCR\tesseract.exe`).
 
 Download the pretrained models:
 

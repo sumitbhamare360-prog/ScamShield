@@ -1,10 +1,14 @@
 import io
+import os
 from PIL import Image
 
 try:
     import pytesseract
 except ImportError:
     pytesseract = None
+
+if pytesseract is not None and os.getenv("TESSERACT_CMD"):
+    pytesseract.pytesseract.tesseract_cmd = os.environ["TESSERACT_CMD"]
 
 
 def extract_text(image_bytes: bytes) -> str:

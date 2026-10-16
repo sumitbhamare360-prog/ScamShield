@@ -10,6 +10,12 @@ Install the Python dependencies:
 pip install -r requirements.txt
 ```
 
+The model runtime packages are not included in `requirements.txt`. Install them before downloading or running the models:
+
+```bash
+pip install torch transformers
+```
+
 Image OCR requires Tesseract to be installed separately and available on the system `PATH`.
 
 Download the pretrained models:

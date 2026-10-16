@@ -73,3 +73,11 @@ def test_confidence_uses_text_length_and_reputation_availability():
     assert medium["confidence"] == "medium"
     assert low["confidence"] == "low"
     assert very_low["confidence"] == "low"
+
+
+def test_missing_model_probability_lowers_confidence():
+    ext = Extracted(masked_text="This is a sufficiently long message with more than fifteen words for model confidence evaluation.")
+    missing_transformer = fuse({}, 0.2, None, ext=ext)
+    missing_lstm = fuse({}, None, 0.2, ext=ext)
+    assert missing_transformer["confidence"] == "medium"
+    assert missing_lstm["confidence"] == "medium"

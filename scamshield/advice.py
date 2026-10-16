@@ -121,7 +121,7 @@ def report_text(verdict: Verdict) -> str:
         "Courier or parcel", "UPI payment request", "Investment or crypto",
         "Impersonation", "Unclear",
     }
-    category = verdict.category if verdict.category in allowed_categories else "Unclear"
+    category = verdict.category if verdict.category in allowed_categories else "Uncertain: verify manually"
     confidence = verdict.confidence if verdict.confidence in allowed_confidence else "low"
     scam_type = verdict.scam_type if verdict.scam_type in allowed_types else "Unclear"
     lines = [

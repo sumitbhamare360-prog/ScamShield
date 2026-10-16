@@ -117,17 +117,19 @@ Status: In progress.
 Status: In progress.
 
 ### Scoring and advice
-- Status: Complete.
-- Test count: 39 tests passing for scoring/advice; 113 tests passing in the full suite.
+- Status: Complete at 2026-10-16.
+- Test count: 41 tests passing for scoring/advice; 115 tests passing in the full suite.
 - What was done:
   - Implemented weighted scoring with available-check filtering and weight redistribution, model contributions, malicious reputation/blocklist overrides, configured score bands, disagreement detection, model agreement, and confidence notes.
   - Implemented rule-first and masked-keyword scam classification, scam-specific remediation actions, required payment and reporting advice, and a safe-field-only report summary.
   - Added scoring and advice fixtures covering the requested boundaries, overrides, weight redistribution, disagreement, all scam types, action requirements, and report privacy.
+  - Added missing-model confidence and unknown report-label fallback tests.
 - Problems found and fixes:
   - The scoring call has no message metadata parameter, although confidence depends on message length and URLs. Added an optional Extracted argument while preserving the three-argument call form.
   - Confidence thresholds: medium when text is below 15 words; low when text has 4 words or fewer, models disagree, or links are present without a reputation result.
   - Scheduled task from an earlier session has no active schedules recorded; removal or non-creation is undocumented. Recorded as an open issue; no schedule was changed in this task.
-- Commit: 842afb6.
+  - Remaining warnings: StarletteDeprecationWarning from FastAPI's site-packages/fastapi/testclient.py:1 about httpx usage; StarletteDeprecationWarning at scamshield/api.py:99 for Starlette's deprecated HTTP_422_UNPROCESSABLE_ENTITY constant.
+- Commit: 74332bf.
 
 ## Phase 3: Integration and quality
 Status: Not started.

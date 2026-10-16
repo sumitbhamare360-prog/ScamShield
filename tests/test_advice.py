@@ -94,3 +94,18 @@ def test_report_text_uses_safe_verdict_fields_and_omits_raw_phone_and_otp():
     assert "9876543210" not in output
     assert "482913" not in output
     assert "OTP fraud" in output
+
+
+def test_report_text_falls_back_to_safe_category_and_unclear_scam_type():
+    verdict = Verdict(
+        score=50,
+        category="Unknown category",
+        confidence="medium",
+        confidence_note="",
+        scam_type="Unknown type",
+        uncertain=False,
+        report_text="",
+    )
+    output = report_text(verdict)
+    assert "Category: Uncertain: verify manually" in output
+    assert "Scam type: Unclear" in output

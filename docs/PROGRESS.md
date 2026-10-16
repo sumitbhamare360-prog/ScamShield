@@ -13,9 +13,9 @@
 10. When a phase is finished, mark it Complete with the date and commit hash, then move the Current status pointer to the next phase.
 
 ## Current status
-Phase: 1 (Core modules), in progress
-Next action: Resolve Phase 1 open issues 1 to 3 (owner actions), then build Store and API.
-Last updated: 2026-10-16 at commit 99cfe13
+Phase: 1 (Core modules) complete; ready for Phase 2 (Scoring, advice, pipeline, dashboard, evaluation)
+Next action: Address Phase 2 development prerequisites (scoring fusion, advice generation, pipeline orchestrator) while maintaining Phase 1 shipping blockers (Issues 1-3).
+Last updated: 2026-10-16 at commit 08f56ad
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -85,7 +85,7 @@ Status: In progress.
   - Ensured failed reputation lookups mark the lookup as failed/not_checked in detail and never falsely report safe. Verified by test.
 
 ### Store and API
-- Status: Complete at commit cf4db6b.
+- Status: Complete at commit 08f56ad.
 - Test count: 15 tests passing (6 store tests in tests/test_store.py, 9 api tests in tests/test_api.py). Total test suite count: 73 tests passing.
 - What was done:
   - Implemented SQLite store in scamshield/store.py managing scans, feedback, and blocklist tables with configurable database path (default ./data/scamshield.db).

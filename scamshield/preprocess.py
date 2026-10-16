@@ -16,8 +16,8 @@ KNOWN_PSP_HANDLES = {
 
 # Regex patterns
 RE_OTP = re.compile(
-    r"(?i)(?:(?:\botp\b|one[-\s]?time[-\s]?password|verification\s*code|pin|code)[\s:=–\-#]*"
-    r"|(?:\bis\b|\bcode\b|\blogin\b)[\s:=–\-#]+)"
+    r"(?i)(?:(?:\botp\b|one[-\s]?time[-\s]?password|verification\s*code|pin|code)[\s:=\u2013\-#]*"
+    r"|(?:\bis\b|\bcode\b|\blogin\b)[\s:=\u2013\-#]+)"
     r"(\b\d{4,8}\b)"
 )
 RE_OTP_POST = re.compile(

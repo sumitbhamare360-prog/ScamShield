@@ -153,7 +153,7 @@ class Verdict(BaseModel):
 - 2026-10-16: Transitional agent tracking replaced by phase-based progress tracking.
 
 ## 8. Commands
-- Install dependencies: `pip install -r requirements.txt`
+- Install dependencies: `pip install -r requirements.txt` (includes `rapidfuzz` for fuzzy brand matching in `scamshield/links.py` and `scamshield/sender.py`)
 - Run API service: `uvicorn scamshield.api:app --reload --port 8000`
 - Run Dashboard: `streamlit run dashboard/app.py`
 - Run Test suite: `python -m pytest tests/`

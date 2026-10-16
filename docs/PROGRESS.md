@@ -15,7 +15,7 @@
 ## Current status
 Phase: 3 (Integration and quality), in progress
 Next action: owner obtains and anonymizes 20 messages from a colleague who has not seen the rules or evaluation failures; resolve SCAMBERT and BiLSTM licence status. No fusion or weight changes before the independent set. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-17 (OCR verification results recorded below).
+Last updated: 2026-10-17 at commit 4848507.
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -241,7 +241,7 @@ Status: In progress.
 - Full test suite: 142 passed, one third-party `StarletteDeprecationWarning` from FastAPI's `testclient.py:1`.
 
 ### Integration pass
-Status: Complete, 2026-10-17 (commit recorded in the follow-up log entry).
+Status: Complete, 2026-10-17 at commit `d69300d`.
 - `.gitignore` already contains `tests/*.db`; verified `tests/test_api_store.db` is ignored. No separate ignore change was needed.
 - Clean clone: cloned `main` at `59bd0fa` into a new directory outside the working folder. Initial documented model download failed because `torch` and `transformers` were not installed by `requirements.txt`; README was clarified to install these runtime packages before downloading models. The corrected clean clone completed the sequence in about 6 minutes 17 seconds excluding the 62.61-second model download, under the 10-minute target. The model download completed successfully.
 - At the original clean-clone integration run, Tesseract was not installed on that QA host and OCR was not exercised. This is resolved by the OCR verification below.
@@ -254,7 +254,7 @@ Status: Complete, 2026-10-17 (commit recorded in the follow-up log entry).
 - Remaining independent set and model licence issues are unchanged; this integration pass does not resolve them.
 
 ### OCR verification
-Status: Complete, 2026-10-17 (verification commit hash recorded in the follow-up log entry).
+Status: Complete, 2026-10-17 at commit `4848507`.
 - Installed UB Mannheim Tesseract `v5.4.0.20240606`. The executable was installed at `C:\Program Files\Tesseract-OCR\tesseract.exe` but was not on the current shell's PATH. Added `TESSERACT_CMD` support in `scamshield/ocr.py` and documented the environment variable in README.md.
 - Generated a runtime-only synthetic screenshot with the requested placeholder message. Direct `ocr.extract_text` output:
   > Your account is blocked. Share OTP 482913 now or call

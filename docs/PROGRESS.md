@@ -14,8 +14,8 @@
 
 ## Current status
 Phase: 2 (Scoring, advice, pipeline, dashboard, evaluation), in progress
-Next action: Review pipeline implementation before dashboard work. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-16 at commit ff2360d
+Next action: Dashboard. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
+Last updated: 2026-10-16 at commit 0320e36
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -142,10 +142,10 @@ Status: In progress.
   - Generated highlights using masked text only, and left highlights empty when the transformer is unavailable or explainability fails.
   - Passed Extracted metadata into scoring.fuse so confidence can use text and link availability.
   - Confirmed from commit 842afb6 that fuse already accepted optional ext; updated the section 5 contract and dated decision log to document the existing contract.
-  - Measured end-to-end analyze latency on CPU with loaded models warmed before timing, 3 runs per input, and use_reputation=False: the four label-mapping sentences combined had median 331.4 ms and maximum 357.2 ms; the 100-word message had median 4,666.5 ms and maximum 4,879.3 ms.
+  - Measured end-to-end analyze latency on CPU with loaded models warmed before timing and use_reputation=False: the four label-mapping sentences combined across 12 runs had median 331.4 ms and maximum 357.2 ms; the 40-word message across 3 runs had median 946.2 ms and maximum 990.7 ms; the 100-word message across 3 runs had median 4,666.5 ms and maximum 4,879.3 ms.
 - Problems found and fixes:
   - Added explicit tests for a None transformer result and an explain.highlights exception; both preserve a Verdict with empty highlights.
-  - The 100-word input exceeds the under-3-second target. Performance optimization remains open; no speed changes were made in this task.
+  - Latency decision (2026-10-16): retain the under-3-second target for typical messages under 50 words. The 40-word measurement is within target. Record the 100-word result as a known stress-test limit and defer optimization to Phase 3; no speed changes were made in this task.
   - The remaining StarletteDeprecationWarning originates from FastAPI's test client and is third-party, not actionable.
 - Commit: ff2360d.
 

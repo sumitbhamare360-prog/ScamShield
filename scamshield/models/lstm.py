@@ -9,6 +9,13 @@ _TOKENIZER = None
 _MODEL = None
 _MODEL_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "models", "bilstm"))
 
+# Output mapping verified via four-sentence test (Phase 1, Open Issue 3):
+# BiLSTM outputs a single scalar logit (Linear(hidden_size*2, 1)).
+# Observed: Positive logits (>+6.0) produce high sigmoid probability (>0.998) on scam sentences;
+# Negative logits (<-9.0) produce low sigmoid probability (<0.0002) on safe sentences.
+# Therefore, positive logit under sigmoid indicates P(scam).
+SCAM_OUTPUT_STRUCTURE: str = "scalar_sigmoid"
+
 
 class BiLSTMClassifier(nn.Module):
     def __init__(

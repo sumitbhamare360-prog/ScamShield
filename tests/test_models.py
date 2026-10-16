@@ -64,3 +64,26 @@ def test_explainer_with_custom_score_fn():
     assert len(hl) == 1
     assert hl[0]["text"] == "danger"
     assert sample[hl[0]["start"]:hl[0]["end"]] == "danger"
+
+
+def test_label_mapping_four_sentences():
+    # The four canonical sentences for label mapping verification
+    scam_1 = "Your account is blocked! Verify immediately with OTP. Send money to scam@ybl using https://scam.xyz/"
+    scam_2 = "Congratulations! You won Rs 50,000 lottery prize. Contact urgently to claim via link: http://bit.ly/claim"
+    safe_1 = "Hey, are we still meeting for lunch tomorrow at 12?"
+    safe_2 = "Your OTP for the login is 482913. Do not share it with anyone."
+
+    assert transformer.SCAM_CLASS_INDEX == 1
+    assert lstm.SCAM_OUTPUT_STRUCTURE == "scalar_sigmoid"
+
+    # SCAMBERT checks
+    assert transformer.score(scam_1) > 0.99
+    assert transformer.score(scam_2) > 0.99
+    assert transformer.score(safe_1) < 0.01
+    assert transformer.score(safe_2) < 0.05
+
+    # BiLSTM checks
+    assert lstm.score(scam_1) > 0.99
+    assert lstm.score(scam_2) > 0.99
+    assert lstm.score(safe_1) < 0.001
+    assert lstm.score(safe_2) < 0.001

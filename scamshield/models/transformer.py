@@ -6,6 +6,13 @@ _TOKENIZER = None
 _MODEL = None
 _MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "models", "scambert"))
 
+# Label mapping verified via four-sentence test (Phase 1, Open Issue 3):
+# id2label is generic: {0: 'LABEL_0', 1: 'LABEL_1'}.
+# Observed: Index 0 produces high probability on safe sentences;
+# Index 1 produces high probability (>0.999) on scam sentences.
+# Therefore, Index 1 is confirmed as SCAM.
+SCAM_CLASS_INDEX: int = 1
+
 
 def _get_model():
     global _TOKENIZER, _MODEL
@@ -41,7 +48,7 @@ def score(text: str) -> float:
         outputs = model(**inputs)
         logits = outputs.logits
         probs = torch.softmax(logits, dim=-1)
-        # Index 1 is confirmed P(scam)
-        scam_prob = probs[0, 1].item()
+        # SCAM_CLASS_INDEX is confirmed P(scam)
+        scam_prob = probs[0, SCAM_CLASS_INDEX].item()
 
     return float(scam_prob)

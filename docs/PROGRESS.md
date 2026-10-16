@@ -20,7 +20,20 @@ Last updated: 2026-10-16 at commit 08f56ad
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
 2. BiLSTM licence not verified (blocks shipping). Owner action: check the licence tag on the model page.
-3. Label mapping for SCAMBERT and BiLSTM not verified. Action: run the four fixed sentences in docs/LICENSES or tests, record raw logits and id2label, state which index means scam.
+3. Label mapping for SCAMBERT and BiLSTM verified (resolved). Four fixed sentences tested and recorded:
+   - Sentence 1 (Scam): "Your account is blocked! Verify immediately with OTP. Send money to scam@ybl using https://scam.xyz/"
+     * SCAMBERT (id2label generic {0: 'LABEL_0', 1: 'LABEL_1'}): Logits = [-4.4548, 4.1978], Probs = [0.000175, 0.999825]. Index 1 = scam.
+     * BiLSTM (scalar logit under sigmoid): Logit = +6.904060, Prob P(scam) = 0.99899727. Positive logit = scam.
+   - Sentence 2 (Scam): "Congratulations! You won Rs 50,000 lottery prize. Contact urgently to claim via link: http://bit.ly/claim"
+     * SCAMBERT: Logits = [-4.5531, 4.2160], Probs = [0.000155, 0.999845]. Index 1 = scam.
+     * BiLSTM: Logit = +9.857625, Prob P(scam) = 0.99994767. Positive logit = scam.
+   - Sentence 3 (Safe): "Hey, are we still meeting for lunch tomorrow at 12?"
+     * SCAMBERT: Logits = [3.6100, -3.7525], Probs = [0.999366, 0.000634]. Index 0 = safe.
+     * BiLSTM: Logit = -11.375002, Prob P(scam) = 0.00001148. Negative logit = safe.
+   - Sentence 4 (Safe): "Your OTP for the login is 482913. Do not share it with anyone."
+     * SCAMBERT: Logits = [1.5299, -1.7361], Probs = [0.963244, 0.036756]. Index 0 = safe.
+     * BiLSTM: Logit = -9.061960, Prob P(scam) = 0.00011598. Negative logit = safe.
+   Resolution: SCAMBERT index 1 means scam (`SCAM_CLASS_INDEX = 1`). BiLSTM scalar positive logit under sigmoid means scam (`SCAM_OUTPUT_STRUCTURE = "scalar_sigmoid"`). Regression tests enforced in `tests/test_models.py`.
 4. Peak memory measured for the whole process, not per model (does not block). Owner action: isolate process memory profiling per model component.
 5. Claim of verified MIT licenses in old log removed (resolved).
 
@@ -59,19 +72,19 @@ Status: In progress.
 
 ### Models and explainability
 - Status: Partly complete at commit 7e86d5e.
-- Test count: 5 tests passing (tests/test_models.py).
+- Test count: 6 tests passing (tests/test_models.py). Total test suite count: 74 tests passing.
 - What was done:
   - Created scripts/download_models.py to cache SCAMBERT and BiLSTM models.
   - Implemented transformer.py scoring via Hugging Face DistilBERT.
   - Implemented lstm.py scoring via PyTorch BiLSTM architecture.
   - Implemented explain.py word perturbation explainer.
   - Latency measured: SCAMBERT 16.22 ms/msg, BiLSTM 2.08 ms/msg. Process memory: ~762 MB (process memory, not valid per model, re-measure pending).
+  - Verified label mapping on four canonical sentences: SCAMBERT index 1 means scam (`SCAM_CLASS_INDEX = 1`), BiLSTM scalar positive logit under sigmoid means scam (`SCAM_OUTPUT_STRUCTURE = "scalar_sigmoid"`).
 - Problems found and fixes:
   - Old task log erroneously claimed MIT licenses verified. Fixed: docs/LICENSES.md marks both models UNCONFIRMED.
-  - Model verification fix items (licences, systematic label mapping test output, per-model memory isolation): not done, recorded as open issues.
+  - Generic id2label in SCAMBERT resolved via empirical four-sentence verification test and enforced in regression tests.
 - Open:
   - Licences unconfirmed for production distribution (Issue 1, Issue 2).
-  - Label mapping for SCAMBERT and BiLSTM not verified (Issue 3).
   - Peak memory measured for the whole process, not per model (Issue 4).
 
 ### Links and sender checks

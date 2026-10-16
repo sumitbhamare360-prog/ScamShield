@@ -15,7 +15,7 @@
 ## Current status
 Phase: 2 (Scoring, advice, pipeline, dashboard, evaluation), in progress
 Next action: evaluation. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-16 at commit 64ba865
+Last updated: 2026-10-16 at commit ae7cf55
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -171,7 +171,7 @@ Status: In progress.
 - Added a real-pipeline API test that stores a full URL, analyzes a message containing it, observes `BLOCKLIST_HIT`, and verifies the score is at least 80. Models were available, so neither `pipeline.analyze` nor its model scores were mocked.
 - The end-to-end test passed without changes to `links.py`; matching uses the stored full URL.
 - Remaining warning: third-party `StarletteDeprecationWarning` from FastAPI's `testclient.py:1` about `httpx` use.
-- Commit: pending progress-only follow-up.
+- Commit: ae7cf55.
 
 ## Phase 3: Integration and quality
 Status: Not started.

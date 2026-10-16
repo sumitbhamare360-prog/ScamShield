@@ -13,9 +13,9 @@
 10. When a phase is finished, mark it Complete with the date and commit hash, then move the Current status pointer to the next phase.
 
 ## Current status
-Phase: 3 (Integration and quality), in progress
-Next action: Phase 3 integration and quality. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-16 at commit 2e93193
+Phase: 2 (Scoring, advice, pipeline, dashboard, evaluation), in progress
+Next action: evaluation. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
+Last updated: 2026-10-16 at commit 00b3c2e
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -38,6 +38,7 @@ Last updated: 2026-10-16 at commit 2e93193
 5. Claim of verified MIT licenses in old log removed (resolved).
 6. Tokenizer for BiLSTM is bert-base-uncased, inferred, not confirmed. The St3w31 repo has no vocabulary file.
 7. Scheduled task from an earlier session: the record shows no active schedules, but the removal or non-creation is not documented. Note this in the Phase 2 entry.
+8. Full system is below rules-only on the synthetic set. Cause not known. Re-evaluate on independently written messages before changing any weight.
 
 ## Phase 0: Scaffold and contracts
 Status: Complete at commit 48ac44d.
@@ -115,7 +116,7 @@ Status: In progress.
   - Replaced deprecated 422 status constant with HTTP_422_UNPROCESSABLE_CONTENT; commit 5150565.
 
 ## Phase 2: Scoring, advice, pipeline, dashboard, evaluation
-Status: Complete at 2026-10-16; evaluation implementation commit 2e93193.
+Status: In progress. Evaluation comparison is being corrected to use all 40 rows under both Suspicious treatments.
 
 ### Scoring and advice
 - Status: Complete at 2026-10-16.
@@ -176,14 +177,14 @@ Status: Complete at 2026-10-16; evaluation implementation commit 2e93193.
 - Commit: ae7cf55.
 
 ### Evaluation harness
-- Status: Complete at 2026-10-16.
+- Status: In progress.
 - Test count: 135 tests passing in the full suite; one existing third-party StarletteDeprecationWarning from FastAPI's `testclient.py:1`.
-- Evaluated exactly 40 synthetic rows: 20 scam and 20 safe. Scoring weights were not tuned on this set.
-- Results: transformer accuracy 0.692 and F1 0.727; LSTM 0.700 and 0.727; rules 0.900 and 0.895; full system 0.794 and 0.821. Suspicious counts were 1, 0, 0, and 6 respectively; no scores were unavailable.
-- The full system was not worse than transformer-only on these development metrics. Its binary metrics include 34 rows versus 39 for transformer-only because Suspicious results are excluded. These synthetic results are for sanity checking only, not a published accuracy claim.
-- Problems found and fixes: quoted and normalized CSV fields after validation found shifted columns and leading whitespace; fixed the dataset. Added the repository root to the runner import path after the direct command initially failed. The final evaluation script completed successfully.
-- Weights used: transformer 0.40, rules 0.20, LSTM 0.15, links 0.15, sender 0.10.
-- Commit: 2e93193.
+- Corrected comparison uses all 40 rows in both tables. Suspicious-as-not-scam: transformer accuracy/F1 0.700/0.727, LSTM 0.700/0.727, rules 0.900/0.895, full system 0.800/0.800. Suspicious-as-scam: transformer 0.675/0.711, LSTM 0.700/0.727, rules 0.900/0.895, full system 0.700/0.739. No scores were unavailable.
+- Rules-only outperformed the full system under both treatments. The earlier conclusion comparing different row sets is withdrawn. This set is synthetic and the rule phrases share its construction process, so the rules result is an upper bound, not evidence of generalization.
+- Full-system errors and masked examples are listed for both treatments in `eval/results.md`. With Suspicious treated as not scam, 1 of 4 false negatives were previously Suspicious. With Suspicious treated as scam, 5 of 9 false positives were previously Suspicious.
+- Scoring weights were not tuned and remain unchanged: transformer 0.40, rules 0.20, LSTM 0.15, links 0.15, sender 0.10. Any weight change requires a separate held-out set.
+- Problems found and fixes: quoted and normalized CSV fields after validation found shifted columns and leading whitespace; fixed the dataset. Added the repository root to the runner import path after the direct command initially failed. Corrected the evaluator to count all 40 rows in both Suspicious treatments.
+- Corrected evaluator and results commit: 00b3c2e. Phase 2 remains open pending review of the same-denominator tables.
 
 ## Phase 3: Integration and quality
 Status: In progress.

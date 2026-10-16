@@ -214,5 +214,14 @@ Status: In progress.
 - Evaluation interpretation: this is a spam-detection generalization check, not a scam-detection or Indian-coverage result. SCAMBERT training-source overlap is unknown. Rules are expected to perform poorly on Western spam; that is a coverage finding, not a fusion finding.
 - Pre-registration was committed before downloading or sampling any dataset rows.
 
+### External UCI spam sample (secondary diagnostic)
+- Source: Almeida & Hidalgo (2011), UCI SMS Spam Collection, DOI https://doi.org/10.24432/C5CC84; dataset page https://archive.ics.uci.edu/dataset/228/sms%2Bspam%2Bcollection. UCI states CC BY 4.0 and permits sharing/adaptation with appropriate credit. The citation and attribution are included in `eval/external_results.md`.
+- Sample: 40 rows, 20 spam mapped to `scam` and 20 ham mapped to `safe`; source field is `uci_sms_spam_collection`. The raw archive is kept outside the repository. Sampling used seed 20261017 and the preregistered digit-run/email exclusion.
+- Replacements (one-based source row positions; excluded -> accepted): spam 4809->135, 390->4603, 5485->2805, 241->16, 57->251, 1689->4238, 2712->4579, 1090->1598, 4170->3863. Eleven subsequent spam candidates were also excluded by the fixed rule: 3969, 3, 4349, 1994, 2054, 2792, 4387, 5253, 2221, 1715, 5471. Ham had no exclusions or replacements.
+- Results are spam-detection results only, not scam-detection accuracy and not evidence of Indian coverage. The first Suspicious-as-not-scam table has transformer, LSTM, and full system at 1.000 accuracy; rules-only is 0.550. LSTM is contaminated because it was trained on this dataset and is excluded from conclusions. The SCAMBERT model card does not identify training sources, so overlap is unknown; the transformer and full-system results do not establish generalization. Rules-only low recall on this Western spam sample is a coverage finding, not a fusion finding.
+- In the Suspicious-as-scam treatment, transformer and full system are 1.000 accuracy, LSTM is 0.975 (contaminated), and rules-only is 0.550. Category counts: Likely Safe 19, Suspicious 0, Likely Scam 18, High-Risk Scam 2, Uncertain 1 (ham). The Uncertain treatment excludes that one ham row and includes 39. Full-system false positives and false negatives are both zero at the 55-point boundary.
+- No rules, weights, thresholds, or fusion changes were made. The UCI result is secondary; an independent owner-supplied set is still required before any fusion changes.
+- Results commit: 99a80f5.
+
 ## Phase 4: Website and launch gates
 Status: Not started. Launch gates: custom domain, favicon, remove platform badge, privacy policy, terms, and legal review.

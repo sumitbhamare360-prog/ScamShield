@@ -135,6 +135,15 @@ def _show_api_error(error: Exception) -> None:
     st.error(str(error))
 
 
+def _uncertain_headline(verdict: dict[str, Any]) -> str | None:
+    if verdict.get("category") != "Uncertain: verify manually":
+        return None
+    score = verdict.get("score")
+    if isinstance(score, (int, float)) and score >= 55:
+        return "Likely scam. The two models disagree, so verify before acting."
+    return "Verify manually. The two models disagree."
+
+
 def _queue_analysis() -> None:
     if st.session_state.get("request_pending", False):
         return
@@ -155,6 +164,9 @@ def _queue_analysis() -> None:
 
 
 def _render_verdict(verdict: dict[str, Any]) -> None:
+    headline = _uncertain_headline(verdict)
+    if headline:
+        st.subheader(headline)
     st.subheader("Analysis result")
     score_col, category_col, confidence_col = st.columns(3)
     score_col.metric("Risk score", f"{verdict.get('score', 'Unavailable')} / 100")

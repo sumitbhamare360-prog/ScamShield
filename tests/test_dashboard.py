@@ -27,6 +27,28 @@ def test_highlight_markup_escapes_untrusted_text():
     assert markup.startswith("<mark>")
 
 
+def test_uncertain_high_score_uses_scam_headline():
+    verdict = {"category": "Uncertain: verify manually", "score": 77}
+
+    assert app._uncertain_headline(verdict) == (
+        "Likely scam. The two models disagree, so verify before acting."
+    )
+    assert verdict["category"] == "Uncertain: verify manually"
+
+
+def test_uncertain_low_score_uses_verify_headline():
+    verdict = {"category": "Uncertain: verify manually", "score": 13}
+
+    assert app._uncertain_headline(verdict) == "Verify manually. The two models disagree."
+
+
+def test_non_uncertain_category_has_no_added_headline():
+    verdict = {"category": "Likely Scam", "score": 77}
+
+    assert app._uncertain_headline(verdict) is None
+    assert verdict["category"] == "Likely Scam"
+
+
 def test_unreachable_service_uses_actionable_message(monkeypatch):
     def fail_request(*args, **kwargs):
         raise requests.ConnectionError("connection details are not displayed")

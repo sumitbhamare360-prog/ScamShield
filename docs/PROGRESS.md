@@ -39,6 +39,7 @@ Last updated: 2026-10-16 at commit e21cab9.
 6. Tokenizer for BiLSTM is bert-base-uncased, inferred, not confirmed. The St3w31 repo has no vocabulary file.
 7. Scheduled task from an earlier session: the record shows no active schedules, but the removal or non-creation is not documented. Note this in the Phase 2 entry.
 8. Full system scores below rules-only on the 40-row synthetic set (rows 2, 5, 10, 15 diagnosed). Action: evaluate any change on a held-out set before changing weights, thresholds, or fusion.
+9. No independent held-out set. Owner to supply 20 messages from a source not used in writing rules or check_set.csv. Until then, no fusion or weight changes.
 
 ## Phase 0: Scaffold and contracts
 Status: Complete at commit 48ac44d.
@@ -198,10 +199,9 @@ Status: In progress.
 - Analysis of the 40-row synthetic set is diagnostic only, not tuning evidence. Of 11 uncertain rows, 4 are scam and 7 are safe. Each standalone model is correct on 5 of 11 uncertain rows. The disagreement pattern is mixed: LSTM confident while transformer is not on rows 2, 5, 29, 33, and 37; transformer confident while LSTM is not on rows 9, 20, 28, and 30; rows 25 and 32 are moderate. No uncertain row scores at least 80; rows 9 and 20 score 55 to 79. Across all 40 rows, mean absolute disagreement is 0.245902, maximum is 0.999633, and 11 are above 0.4. This corrects the earlier hypothesis that LSTM is the main driver.
 - Dashboard now presents uncertain scores of 55 or higher with the headline "Likely scam. The two models disagree, so verify before acting." Scores below 55 use "Verify manually. The two models disagree." The score and unchanged verdict category remain visible; other categories render as before.
 - Test count: 138 passing in the full suite; one third-party StarletteDeprecationWarning from FastAPI's test client.
-- Held-out set authored for separate review at `data/eval/heldout.csv`, 10 scam and 10 safe. Keep it out of tuning; use only for evaluation of a proposed change.
-- Pre-run independence check found held-out row 13 too close to a safe water-bill row in `check_set.csv`. The original `heldout.csv` remains frozen; `data/eval/heldout_v2.csv` replaces only that row and is the candidate for owner review (commit 45b57d5). No held-out evaluation has been run.
-- Row replaced because its safe phrase overlapped check_set.csv row 37. Replacement chosen before any evaluation run.
-- Topic check found `heldout_v2.csv` row 13 is an intercity rail fare/receipt, while safe check_set.csv row 33 is a train journey with a ticket saved in the railway app. These are the same travel-ticket topic; heldout_v2.csv is not cleared for evaluation pending owner review.
+- Held-out independence audit found 7 safe rows in `heldout_v2.csv` overlap everyday topics in the 40-row `check_set.csv`, above the threshold of 2. Overlaps include OTP/authentication, shop/transfer receipts, rail tickets, delivery notices, group contributions, and shared-cost payments.
+- Row replaced because its safe phrase overlapped check_set.csv row 37. Replacement chosen before any evaluation run. The replacement still shared a travel-ticket topic with safe check_set.csv row 32.
+- `heldout.csv`, `heldout_v2.csv`, and the moved agent draft are superseded and were never evaluated. No independent held-out result exists. The owner selected the public SMS dataset option as the next source to review; obtain an independent set from outside the project before evaluation. Do not tune weights, thresholds, or fusion until then.
 - Dashboard presentation commit: dbb1b63.
 
 ## Phase 4: Website and launch gates

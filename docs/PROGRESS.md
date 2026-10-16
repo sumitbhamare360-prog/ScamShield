@@ -204,5 +204,15 @@ Status: In progress.
 - `heldout.csv`, `heldout_v2.csv`, and the moved agent draft are superseded and were never evaluated. No independent held-out result exists. The owner selected the public SMS dataset option as the next source to review; obtain an independent set from outside the project before evaluation. Do not tune weights, thresholds, or fusion until then.
 - Dashboard presentation commit: dbb1b63.
 
+### External public dataset pre-registration
+- Source: UCI SMS Spam Collection. Licence checked: “This dataset is licensed under a Creative Commons Attribution 4.0 International (CC BY 4.0) license”; sharing and adaptation are permitted with appropriate credit. Source: https://archive.ics.uci.edu/dataset/228/sms%2Bspam%2Bcollection.
+- Mapping: spam = positive label, ham = negative label. Results describe spam detection, not scam detection.
+- Seed: 20261017. Sample 20 spam and 20 ham with random.Random(20261017) from the file's rows.
+- Exclusion rule, fixed now: drop a sampled row only if it contains a digit run of 10 or more, or an email address. Replace it by drawing the next unsampled row from the same class using the same seed order. Record every replacement.
+- LSTM is reported but flagged: “Contaminated, trained on this dataset. Excluded from conclusions.”
+- No tuning on this set. If a result is poor, record it; do not change code.
+- Evaluation interpretation: this is a spam-detection generalization check, not a scam-detection or Indian-coverage result. SCAMBERT training-source overlap is unknown. Rules are expected to perform poorly on Western spam; that is a coverage finding, not a fusion finding.
+- Pre-registration was committed before downloading or sampling any dataset rows.
+
 ## Phase 4: Website and launch gates
 Status: Not started. Launch gates: custom domain, favicon, remove platform badge, privacy policy, terms, and legal review.

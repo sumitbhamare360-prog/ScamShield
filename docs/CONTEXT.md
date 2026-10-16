@@ -15,7 +15,7 @@ The engine flags high-risk indicators, generates human-understandable evidence s
 2. Preprocessing: Message text is masked (sanitizing OTPs, mobile numbers, card, and account numbers), and metadata (URLs, phone numbers, UPI IDs, amounts, sender domains) is extracted into an Extracted object.
 3. Feature checks and Model scoring:
    - Rules: Evaluates pattern rules, urgency cues, and scam indicators.
-   - Links: Analyzes URL destinations, obfuscation, and blocklists.
+   - Links: Analyzes URL destinations, obfuscation, blocklists, and reputation lookups; failed reputation lookups never count as safe.
    - Sender: Inspects sender handle, display name spoofing, and domain reputation.
    - Pretrained Models (SCAMBERT, BiLSTM): Predict probability scores P(scam) independently.
    - Explainability: Extracts token and span highlights correlated with scam predictions.
@@ -34,6 +34,7 @@ ScamShield/
   data/
     brands.json
     eval/
+      .gitkeep
   docs/
     CONTEXT.md
     LICENSES.md
@@ -61,9 +62,11 @@ ScamShield/
   scripts/
     download_models.py
   tests/
+    test_links.py
     test_models.py
     test_preprocess.py
     test_rules.py
+    test_sender.py
 ```
 
 ## 5. Contracts
@@ -160,4 +163,4 @@ class Verdict(BaseModel):
 - SCAMBERT and BiLSTM model licensing status is unconfirmed for production distribution.
 - English and Hinglish patterns are supported; broader regional languages are pending.
 - OCR requires external Tesseract binary installed on the host system PATH.
-- Link reputation currently relies on local blocklist data pending external threat feed integration.
+- Reputation checks use Google Safe Browsing (only when GSB_API_KEY is set) and URLhaus; both can fail, in which case the result is "not_checked".

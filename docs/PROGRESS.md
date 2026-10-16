@@ -14,13 +14,13 @@
 
 ## Current status
 Phase: 1 (Core modules), in progress
-Next action: Resolve Phase 1 open issues, then build links and sender checks.
-Last updated: 2026-10-16 at commit df4a225
+Next action: Resolve Phase 1 open issues 1 to 3 (owner actions), then build Store and API.
+Last updated: 2026-10-16 at commit 99cfe13
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
 2. BiLSTM licence not verified (blocks shipping). Owner action: check the licence tag on the model page.
-3. Label mapping for SCAMBERT and BiLSTM not verified (blocks shipping). Owner action: perform and record systematic test matrix validating label index mapping across representative datasets.
+3. Label mapping for SCAMBERT and BiLSTM not verified. Action: run the four fixed sentences in docs/LICENSES or tests, record raw logits and id2label, state which index means scam.
 4. Peak memory measured for the whole process, not per model (does not block). Owner action: isolate process memory profiling per model component.
 5. Claim of verified MIT licenses in old log removed (resolved).
 
@@ -38,6 +38,7 @@ Problems found and fixes:
 - Root models directory in .gitignore initially ignored package scamshield/models/. Fixed by anchoring ignore pattern to /models/.
 - Overlap in early tracking for scripts/ and tests/. Fixed during scaffold restructuring.
 - Path error in initial tracking table referencing docs/ instead of website/. Fixed at commit df4a225.
+- Documentation restructuring into phase-based log completed at commit 12f07f4.
 Files removed:
 - docs/TASKS.md removed during migration to docs/PROGRESS.md.
 
@@ -46,7 +47,7 @@ Status: In progress.
 
 ### Preprocessing, masking, rules, OCR
 - Status: Complete at commit 7e86d5e.
-- Test count: 33 tests passing (tests/test_preprocess.py, tests/test_rules.py). Total test suite count: 38 tests passing.
+- Test count: 33 tests passing (tests/test_preprocess.py, tests/test_rules.py). Total test suite count: 58 tests passing.
 - What was done:
   - Implemented mask() covering OTPs, Indian mobile numbers, bank account numbers, and card numbers, retaining last 2 visible digits.
   - Implemented extract() handling obfuscated URLs (hxxp, [.]), phones, UPI IDs, amounts, and email sender headers.
@@ -64,16 +65,17 @@ Status: In progress.
   - Implemented transformer.py scoring via Hugging Face DistilBERT.
   - Implemented lstm.py scoring via PyTorch BiLSTM architecture.
   - Implemented explain.py word perturbation explainer.
-  - Measured CPU latency: SCAMBERT 16.22 ms/msg, BiLSTM 2.08 ms/msg. Process memory: ~762 MB.
+  - Latency measured: SCAMBERT 16.22 ms/msg, BiLSTM 2.08 ms/msg. Process memory: ~762 MB (process memory, not valid per model, re-measure pending).
 - Problems found and fixes:
   - Old task log erroneously claimed MIT licenses verified. Fixed: docs/LICENSES.md marks both models UNCONFIRMED.
+  - Model verification fix items (licences, systematic label mapping test output, per-model memory isolation): not done, recorded as open issues.
 - Open:
   - Licences unconfirmed for production distribution (Issue 1, Issue 2).
-  - Formal label mapping validation across broader benchmarks (Issue 3).
-  - Per-model memory isolation (Issue 4).
+  - Label mapping for SCAMBERT and BiLSTM not verified (Issue 3).
+  - Peak memory measured for the whole process, not per model (Issue 4).
 
 ### Links and sender checks
-- Status: Complete at commit 5f58def.
+- Status: Complete at commit 99cfe13.
 - Test count: 20 tests passing (14 links tests in tests/test_links.py, 6 sender tests in tests/test_sender.py). Total test suite count: 58 tests passing.
 - What was done:
   - Populated data/brands.json with major Indian banks, UPI apps, wallets, and couriers along with official domains.

@@ -3,9 +3,11 @@ import os
 import shutil
 
 import pytest
+from fastapi.testclient import TestClient
 from PIL import Image, ImageDraw, ImageFont
 
 from scamshield import ocr
+from scamshield.api import app
 
 
 TESSERACT_PATH = (
@@ -38,15 +40,20 @@ def make_synthetic_screenshot():
     return output.getvalue()
 
 
-def test_missing_binary_returns_error(monkeypatch):
+def test_missing_binary_returns_503(monkeypatch):
     assert ocr.pytesseract is not None, "pytesseract is required to test the missing binary path"
     monkeypatch.setattr(
         ocr.pytesseract.pytesseract,
         "tesseract_cmd",
         "missing-tesseract-executable",
     )
-    result = ocr.extract_text(make_synthetic_screenshot())
-    assert result.startswith("Error: Tesseract OCR engine is not installed")
+    with TestClient(app, raise_server_exceptions=False) as client:
+        response = client.post(
+            "/analyze-image",
+            files={"file": ("screenshot.png", make_synthetic_screenshot(), "image/png")},
+        )
+    assert response.status_code == 503
+    assert response.json()["error"] == "ocr_unavailable"
 
 
 @pytest.mark.skipif(not TESSERACT_PATH, reason="Tesseract binary is not available")

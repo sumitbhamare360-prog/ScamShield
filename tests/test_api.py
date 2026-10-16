@@ -138,6 +138,41 @@ def test_analyze_image_endpoint(mock_analyze, mock_ocr, client):
     assert data["scan_id"] is not None
 
 
+def test_analyze_image_missing_tesseract_returns_503(monkeypatch, client):
+    monkeypatch.setattr(
+        "scamshield.api.ocr.extract_text",
+        lambda _contents: "Error: Tesseract OCR engine is not installed or not found on system PATH.",
+    )
+    res = client.post(
+        "/analyze-image",
+        files={"file": ("screenshot.png", b"image bytes", "image/png")},
+    )
+    assert res.status_code == 503
+    assert res.json() == {
+        "error": "ocr_unavailable",
+        "message": "Screenshot reading is not available on this server. Paste the message text instead.",
+    }
+
+
+def test_analyze_image_invalid_file_returns_422(client):
+    res = client.post(
+        "/analyze-image",
+        files={"file": ("not-image.png", b"plain text", "image/png")},
+    )
+    assert res.status_code == 422
+    assert set(res.json()) == {"error", "message"}
+
+
+def test_analyze_image_empty_ocr_result_returns_422(monkeypatch, client):
+    monkeypatch.setattr("scamshield.api.ocr.extract_text", lambda _contents: "")
+    res = client.post(
+        "/analyze-image",
+        files={"file": ("blank.png", b"image bytes", "image/png")},
+    )
+    assert res.status_code == 422
+    assert set(res.json()) == {"error", "message"}
+
+
 def test_history_crud_endpoints(client):
     # Add scan manually
     scan_id = store.save_scan("Masked text", "email", {"score": 50})

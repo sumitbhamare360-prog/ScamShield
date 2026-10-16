@@ -15,7 +15,7 @@
 ## Current status
 Phase: 3 (Integration and quality), in progress
 Next action: owner obtains and anonymizes 20 messages from a colleague who has not seen the rules or evaluation failures; resolve SCAMBERT and BiLSTM licence status. No fusion or weight changes before the independent set. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-17 at commit 4848507.
+Last updated: 2026-10-17 (OCR error-path correction recorded below).
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -115,7 +115,7 @@ Status: In progress.
   - Verified with direct SQLite inspection test that raw OTPs and phone numbers never appear in the database.
   - Replaced deprecated 413 status constant with numeric HTTP status 413; full suite confirms the warning is gone.
   - Replaced deprecated 422 status constant with HTTP_422_UNPROCESSABLE_CONTENT; commit 5150565.
-  - OCR verification on 2026-10-17 found two remaining `HTTP_422_UNPROCESSABLE_ENTITY` references in the `/analyze-image` error handlers (`scamshield/api.py:141` and `:148`). The handlers returned the expected 422 JSON responses, but emitted a deprecation warning; replacement is a Phase 1 cleanup item.
+  - OCR verification found two remaining deprecated 422 references in `/analyze-image`; replaced them with `HTTP_422_UNPROCESSABLE_CONTENT` in Phase 3 OCR error-path commit (hash recorded below). The image handler no longer emits that deprecation warning.
 
 ## Phase 2: Scoring, advice, pipeline, dashboard, evaluation
 Status: Complete at 2026-10-17; reporting close-out commit d476e8e.
@@ -262,8 +262,10 @@ Status: Complete, 2026-10-17 at commit `4848507`.
   > 9876543210. Visit https://example.com/verify
 - Keyword check: blocked found; OTP found; 482913 found; example.com found. Result: 4/4, pass.
 - Live `/analyze-image`: HTTP 200, JSON verdict with `scan_id`. Response body contained neither raw placeholder number nor the complete unmasked OCR output. SQLite check passed: the stored `masked_text` contains phone and OTP mask markers and neither raw value; the database bytes also contain neither raw value.
-- Failure paths: with `TESSERACT_CMD` pointed to a nonexistent executable, `/analyze-image` returned HTTP 422 with JSON keys `error` and `message`. A text file uploaded as PNG also returned HTTP 422 with JSON keys `error` and `message`; no stack trace or 500.
-- The manual API run surfaced a deprecation warning from the remaining 422 constant references, recorded under the Phase 1 Store and API entry for cleanup. The full test suite's warning is the separate third-party Starlette test-client warning.
+- Initial failure-path observation (2026-10-17): missing Tesseract returned 422. Corrected this behavior in the OCR error-path fix below.
+- Corrected failure paths: missing Tesseract or `pytesseract` now returns HTTP 503 with `{"error":"ocr_unavailable","message":"Screenshot reading is not available on this server. Paste the message text instead."}`. Invalid image upload and empty OCR results continue to return HTTP 422 JSON with `error` and `message`. Replaced both deprecated 422 constants in the image handler with `HTTP_422_UNPROCESSABLE_CONTENT`; this removes the handler deprecation warning.
+- Style check passed. Full suite: 147 passed, 0 skipped, with one third-party Starlette test-client deprecation warning.
+- OCR error-path correction committed as `Phase 3: OCR unavailable returns 503` (hash recorded in the follow-up log entry).
 - Added `tests/test_ocr.py` with an always-run missing-binary check and a live OCR keyword check. Full suite: 144 passed, 0 skipped, one third-party Starlette test-client deprecation warning. Style check passed.
 - OCR is marked Complete because the keyword criterion and live endpoint privacy check passed. The generated screenshot was not committed.
 

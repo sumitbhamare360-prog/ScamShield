@@ -138,14 +138,25 @@ async def analyze_image(
         contents = await file.read()
     except Exception:
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             content={"error": "unprocessable_entity", "message": "Failed to read image file."}
         )
 
     extracted_text = ocr.extract_text(contents)
     if extracted_text.startswith("Error:"):
+        if (
+            extracted_text.startswith("Error: Tesseract OCR engine is not installed")
+            or extracted_text == "Error: pytesseract library is not installed."
+        ):
+            return JSONResponse(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                content={
+                    "error": "ocr_unavailable",
+                    "message": "Screenshot reading is not available on this server. Paste the message text instead.",
+                },
+            )
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             content={"error": "ocr_failed", "message": extracted_text}
         )
 

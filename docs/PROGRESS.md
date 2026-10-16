@@ -73,8 +73,14 @@ Status: In progress.
   - Per-model memory isolation (Issue 4).
 
 ### Links and sender checks
-- Status: Not started.
-- Details: scamshield/links.py and scamshield/sender.py contain NotImplementedError stubs. data/brands.json has empty lists. No test files exist.
+- Status: Complete at commit 5f58def.
+- Test count: 20 tests passing (14 links tests in tests/test_links.py, 6 sender tests in tests/test_sender.py). Total test suite count: 58 tests passing.
+- What was done:
+  - Populated data/brands.json with major Indian banks, UPI apps, wallets, and couriers along with official domains.
+  - Implemented links.check() in scamshield/links.py with structural flags (suspicious TLDs, >3 subdomains, raw IP host, punycode, @ symbol, known shorteners, very long URLs), lookalike brand matching via rapidfuzz ratio >= 85, active blocklist lookups, and reputation integrations (Google Safe Browsing v4 with GSB_API_KEY, URLhaus) with 3-second timeout and mocked HTTP testing.
+  - Implemented sender.check() in scamshield/sender.py with display name brand mismatch against sender domain, free email provider brand impersonation, lookalike sender domains, and high-risk TLD checks.
+- Problems found and fixes:
+  - Ensured failed reputation lookups mark the lookup as failed/not_checked in detail and never falsely report safe. Verified by test.
 
 ### Store and API
 - Status: Not started.

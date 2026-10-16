@@ -15,7 +15,7 @@
 ## Current status
 Phase: 3 (Integration and quality), in progress
 Next action: owner supplies the held-out set, then fusion review. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-16 at the Phase 2 evaluation close-out.
+Last updated: 2026-10-16 at commit e21cab9.
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -116,7 +116,7 @@ Status: In progress.
   - Replaced deprecated 422 status constant with HTTP_422_UNPROCESSABLE_CONTENT; commit 5150565.
 
 ## Phase 2: Scoring, advice, pipeline, dashboard, evaluation
-Status: Complete at 2026-10-16; close-out commit to be recorded after commit.
+Status: Complete at 2026-10-16; close-out commit e21cab9.
 
 ### Scoring and advice
 - Status: Complete at 2026-10-16.
@@ -185,7 +185,7 @@ Status: Complete at 2026-10-16; close-out commit to be recorded after commit.
 - Diagnostic: row 2 fired `URGENT_BLOCK` (0.85), row 5 had no rule evidence, row 10 fired `JOB_FEE` (0.80), and row 15 fired `UPI_COLLECT` (0.80). The component table and weighted contributions were reported using masked text; rule scores of 80 on rows 10 and 15 were diluted below 55 by low model contributions, while row 5 is a rule-coverage gap.
 - Scoring weights were not tuned and remain unchanged: transformer 0.40, rules 0.20, LSTM 0.15, links 0.15, sender 0.10. Any weight change requires a separate held-out set.
 - Problems found and fixes: quoted and normalized CSV fields after validation found shifted columns and leading whitespace; fixed the dataset. Added the repository root to the runner import path after the direct command initially failed. Corrected the evaluator to count all 40 rows in both Suspicious treatments.
-- Phase 2 close-out commit: to be recorded after commit.
+- Phase 2 close-out commit: e21cab9.
 
 ## Phase 3: Integration and quality
 Status: In progress.

@@ -99,6 +99,28 @@ def test_link_reputation_override_produces_high_risk_verdict(mocked_checks, monk
     assert verdict.score >= 80
 
 
+def test_transformer_none_keeps_verdict_and_empty_highlights(mocked_checks, monkeypatch):
+    monkeypatch.setattr(pipeline.transformer, "score", Mock(return_value=None))
+    highlight_mock = Mock(side_effect=AssertionError("highlights should be skipped"))
+    monkeypatch.setattr(pipeline.explain, "highlights", highlight_mock)
+
+    verdict = pipeline.analyze(Message(text="not printed", channel="sms"), False, set())
+
+    assert isinstance(verdict, Verdict)
+    assert verdict.highlights == []
+    highlight_mock.assert_not_called()
+
+
+def test_explain_failure_keeps_verdict_and_empty_highlights(mocked_checks, monkeypatch):
+    monkeypatch.setattr(pipeline.explain, "highlights", Mock(side_effect=RuntimeError("explain failed")))
+
+    verdict = pipeline.analyze(Message(text="not printed", channel="sms"), False, set())
+
+    assert isinstance(verdict, Verdict)
+    assert verdict.highlights == []
+    assert verdict.report_text
+
+
 def test_models_receive_only_masked_text(monkeypatch):
     raw_text = "Call me at 9876543210 and use OTP 482913 to verify your account."
     message = Message(text=raw_text, channel="sms")

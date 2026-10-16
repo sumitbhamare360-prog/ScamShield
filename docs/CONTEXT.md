@@ -116,6 +116,8 @@ class Verdict(BaseModel):
     scan_id: Optional[int] = None
 ```
 
+Scoring API: `fuse(checks, lstm_p, transformer_p, ext=None)`. `ext` is an optional `Extracted` value used to assess masked-text length and URL/reputation availability for confidence. When omitted, confidence cannot use those message features.
+
 ### Module Responsibilities
 - `preprocess`: Masks sensitive numbers and extracts structured metadata.
 - `rules`: Runs regex heuristic pattern checks and outputs evidence.
@@ -151,6 +153,7 @@ class Verdict(BaseModel):
 - 2026-10-16: SQLite stores masked text only; unmasked text is never persisted or logged.
 - 2026-10-16: Models load once at application startup to reduce per-request latency.
 - 2026-10-16: Transitional agent tracking replaced by phase-based progress tracking.
+- 2026-10-16: `scoring.fuse` accepts optional `ext` metadata because confidence rules depend on masked-text word count and URL/reputation availability, which cannot be derived from check scores and model probabilities alone.
 
 ## 8. Commands
 - Install dependencies: `pip install -r requirements.txt` (includes `rapidfuzz` for fuzzy brand matching in `scamshield/links.py` and `scamshield/sender.py`)

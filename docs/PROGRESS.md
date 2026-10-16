@@ -15,7 +15,7 @@
 ## Current status
 Phase: 2 (Scoring, advice, pipeline, dashboard, evaluation), in progress
 Next action: Review pipeline implementation before dashboard work. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-16 at commit 229d4e9
+Last updated: 2026-10-16 at commit ff2360d
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -135,19 +135,24 @@ Status: In progress.
 
 ### Pipeline
 - Status: Complete at 2026-10-16.
-- Test count: 9 pipeline tests passing; 124 tests passing in the full suite.
+- Test count: 11 pipeline tests passing; 126 tests passing in the full suite.
 - What was done:
   - Implemented concurrent transformer, BiLSTM, rules, links, and sender checks and assembled their results into a Verdict.
   - Check exceptions produce safe error details and do not prevent a Verdict; missing model probabilities remain None and model checks are marked error or not_checked.
   - Generated highlights using masked text only, and left highlights empty when the transformer is unavailable or explainability fails.
   - Passed Extracted metadata into scoring.fuse so confidence can use text and link availability.
+  - Confirmed from commit 842afb6 that fuse already accepted optional ext; updated the section 5 contract and dated decision log to document the existing contract.
+  - Measured end-to-end analyze latency on CPU with loaded models warmed before timing, 3 runs per input, and use_reputation=False: the four label-mapping sentences combined had median 331.4 ms and maximum 357.2 ms; the 100-word message had median 4,666.5 ms and maximum 4,879.3 ms.
 - Problems found and fixes:
-  - Confirmed the orchestration can use existing module contracts; no changes to schemas.py, config.py, scoring.py, advice.py, model modules, or check modules were needed.
+  - Added explicit tests for a None transformer result and an explain.highlights exception; both preserve a Verdict with empty highlights.
+  - The 100-word input exceeds the under-3-second target. Performance optimization remains open; no speed changes were made in this task.
   - The remaining StarletteDeprecationWarning originates from FastAPI's test client and is third-party, not actionable.
-- Commit: 229d4e9.
+- Commit: ff2360d.
 
 ## Phase 3: Integration and quality
 Status: Not started.
+- Quality list:
+  - Validate model probabilities are within [0, 1] before constructing CheckResult scores.
 
 ## Phase 4: Website and launch gates
 Status: Not started. Launch gates: custom domain, favicon, remove platform badge, privacy policy, terms, and legal review.

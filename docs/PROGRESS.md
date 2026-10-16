@@ -14,8 +14,8 @@
 
 ## Current status
 Phase: 2 (Scoring, advice, pipeline, dashboard, evaluation), in progress
-Next action: Scoring and advice. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-16 at commit 08f56ad
+Next action: Review pipeline implementation before dashboard work. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
+Last updated: 2026-10-16 at commit 229d4e9
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -131,7 +131,20 @@ Status: In progress.
   - Scheduled task from an earlier session has no active schedules recorded; removal or non-creation is undocumented. Recorded as an open issue; no schedule was changed in this task.
   - Remaining warning: StarletteDeprecationWarning from FastAPI's site-packages/fastapi/testclient.py:1 about httpx usage.
   - The FastAPI test client warning is third-party, not actionable; it originates from FastAPI's testclient.py and does not come from project code.
-- Commit: 74332bf.
+- Commit: a9c14e2.
+
+### Pipeline
+- Status: Complete at 2026-10-16.
+- Test count: 9 pipeline tests passing; 124 tests passing in the full suite.
+- What was done:
+  - Implemented concurrent transformer, BiLSTM, rules, links, and sender checks and assembled their results into a Verdict.
+  - Check exceptions produce safe error details and do not prevent a Verdict; missing model probabilities remain None and model checks are marked error or not_checked.
+  - Generated highlights using masked text only, and left highlights empty when the transformer is unavailable or explainability fails.
+  - Passed Extracted metadata into scoring.fuse so confidence can use text and link availability.
+- Problems found and fixes:
+  - Confirmed the orchestration can use existing module contracts; no changes to schemas.py, config.py, scoring.py, advice.py, model modules, or check modules were needed.
+  - The remaining StarletteDeprecationWarning originates from FastAPI's test client and is third-party, not actionable.
+- Commit: 229d4e9.
 
 ## Phase 3: Integration and quality
 Status: Not started.

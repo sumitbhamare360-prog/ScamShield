@@ -14,8 +14,8 @@
 
 ## Current status
 Phase: 2 (Scoring, advice, pipeline, dashboard, evaluation), in progress
-Next action: Dashboard. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-16 at commit 0320e36
+Next action: evaluation. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
+Last updated: 2026-10-16 (dashboard complete; commit pending)
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -148,6 +148,20 @@ Status: In progress.
   - Latency decision (2026-10-16): retain the under-3-second target for typical messages under 50 words. The 40-word measurement is within target. Record the 100-word result as a known stress-test limit and defer optimization to Phase 3; no speed changes were made in this task.
   - The remaining StarletteDeprecationWarning originates from FastAPI's test client and is third-party, not actionable.
 - Commit: ff2360d.
+
+### Dashboard
+- Status: Complete at 2026-10-16.
+- Test count: 5 dashboard tests passing; 131 tests passing in the full suite.
+- What was done:
+  - Built the Streamlit Analyze, History, and Blocklist pages against the existing FastAPI endpoints, with mock mode, image upload, reputation toggle, verdict evidence, feedback, report download, and blocklist actions.
+  - Escaped all highlight text before rendering; exercised the UI with fixed mock data and a synthetic message against the live local API.
+  - Added filters and confirmed per-scan and clear-all history deletion controls.
+- Problems found and fixes:
+  - First UI run mixed light backgrounds with the default dark text palette. Applied a neutral grey palette with teal accent and readable form controls.
+  - The first request-state implementation left form controls disabled after completion. Switched to a submit callback and explicit pending-state reset; confirmed controls disable during the request and re-enable afterward.
+  - Full suite has one existing StarletteDeprecationWarning from FastAPI's `testclient.py:1` about `httpx` use. It is third-party and not actionable in this task.
+- Mock and live API checks: passed. API health reported models loaded; dashboard submission returned and displayed a live Verdict.
+- Commit: pending progress-only follow-up.
 
 ## Phase 3: Integration and quality
 Status: Not started.

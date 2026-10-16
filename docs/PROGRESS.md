@@ -14,8 +14,8 @@
 
 ## Current status
 Phase: 3 (Integration and quality), in progress
-Next action: owner supplies the held-out set, then fusion review. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-16 at commit e21cab9.
+Next action: owner obtains and anonymizes 20 messages from a colleague who has not seen the rules or evaluation failures; resolve SCAMBERT and BiLSTM licence status. No fusion or weight changes before the independent set. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
+Last updated: 2026-10-17 at commit 59bd0fa.
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -39,7 +39,7 @@ Last updated: 2026-10-16 at commit e21cab9.
 6. Tokenizer for BiLSTM is bert-base-uncased, inferred, not confirmed. The St3w31 repo has no vocabulary file.
 7. Scheduled task from an earlier session: the record shows no active schedules, but the removal or non-creation is not documented. Note this in the Phase 2 entry.
 8. Full system scores below rules-only on the 40-row synthetic set (rows 2, 5, 10, 15 diagnosed). Action: evaluate any change on a held-out set before changing weights, thresholds, or fusion.
-9. No independent held-out set. Owner to supply 20 messages from a source not used in writing rules or check_set.csv. Until then, no fusion or weight changes.
+9. No independent held-out set. Owner will obtain 20 messages from a colleague who has not seen the rules or evaluation failures, then anonymize and label them before adding them to the repo or sharing them in prompts. Until then, no fusion, rule, or weight changes.
 
 ## Phase 0: Scaffold and contracts
 Status: Complete at commit 48ac44d.
@@ -237,7 +237,21 @@ Status: In progress.
 ### Style check and README
 - Added `scripts/style_check.py` to scan tracked files for prohibited punctuation, emoji, and visual style violations, excluding evaluation CSV data and raw dataset paths. Added setup, model download and licence status, API and dashboard modes, test and style commands, evaluation caveats, UCI attribution, and limitations link to README.md.
 - Style check initially reported en dashes at `scamshield/preprocess.py:19` and `scamshield/preprocess.py:20`. Replaced the literal separators with `\u2013` regex escapes, preserving separator behavior while removing the style violations. Resolved in Phase 1 commit `90bf956`; the style check now passes.
+- Follow-up source check: `inspect.getsource` returned the two regex lines with escaped `\\u2013` sequences and no literal en-dash character; the `<U+2013>` shown in the earlier Before note was display notation only.
 - Full test suite: 142 passed, one third-party `StarletteDeprecationWarning` from FastAPI's `testclient.py:1`.
+
+### Integration pass
+Status: Complete, 2026-10-17 (commit recorded in the follow-up log entry).
+- `.gitignore` already contains `tests/*.db`; verified `tests/test_api_store.db` is ignored. No separate ignore change was needed.
+- Clean clone: cloned `main` at `59bd0fa` into a new directory outside the working folder. Initial documented model download failed because `torch` and `transformers` were not installed by `requirements.txt`; README was clarified to install these runtime packages before downloading models. The corrected clean clone completed the sequence in about 6 minutes 17 seconds excluding the 62.61-second model download, under the 10-minute target. The model download completed successfully.
+- Tesseract is not installed on the QA host. The README clearly says it must be installed separately for OCR, so OCR was unavailable and not exercised in this run.
+- Clean-clone tests after model download: 142 passed. Final style check printed `style check passed`; final full suite: 142 passed with one third-party `StarletteDeprecationWarning` from FastAPI's `testclient.py:1`.
+- Live API: `/health` returned `status=ok` and `models_loaded=true`. A synthetic analysis returned a populated verdict and `scan_id`.
+- Live dashboard: the same synthetic analysis displayed its verdict card, score, category, confidence, masked-text highlight, evidence checks, and report download control.
+- API stopped: dashboard remained usable. The `ScamShield service is not running` warning appeared when opening API-backed History; reloading Analyze kept the form and navigation available but did not proactively show the warning.
+- Privacy check: PASS. Searched the live SQLite database bytes for the placeholder phone and OTP; neither raw value was present. Only the pass result is recorded; no message content is stored in this log.
+- README fix: documented installation of `torch` and `transformers`, which are required by the model downloader but absent from `requirements.txt`.
+- Remaining independent set and model licence issues are unchanged; this integration pass does not resolve them.
 
 ## Phase 4: Website and launch gates
 Status: Not started. Launch gates: custom domain, favicon, remove platform badge, privacy policy, terms, and legal review.

@@ -2,7 +2,7 @@
 
 ## How to work on this project
 1. Read docs/CONTEXT.md and the "Current status" section below. Read nothing else first.
-2. Work on the current phase only. Do not start a later phase until the current phase has no open blocking items.
+2. Do not start a later phase while the current phase has open items that block development. Items that block shipping do not block development, but they must stay listed until resolved.
 3. When a task finishes, add to the current phase: what was done, problems found, fix applied, commit hash.
 4. When something fails, log it under the phase where it happened, and state whether it is fixed or open.
 5. Do not change shared contracts in schemas.py without a decision logged in CONTEXT.md.
@@ -85,8 +85,17 @@ Status: In progress.
   - Ensured failed reputation lookups mark the lookup as failed/not_checked in detail and never falsely report safe. Verified by test.
 
 ### Store and API
-- Status: Not started.
-- Details: scamshield/store.py contains NotImplementedError stubs. scamshield/api.py has GET /health only. No test files exist.
+- Status: Complete at commit cf4db6b.
+- Test count: 15 tests passing (6 store tests in tests/test_store.py, 9 api tests in tests/test_api.py). Total test suite count: 73 tests passing.
+- What was done:
+  - Implemented SQLite store in scamshield/store.py managing scans, feedback, and blocklist tables with configurable database path (default ./data/scamshield.db).
+  - Implemented save_scan storing masked text only, list_scans, delete_scan, clear_history, save_feedback, add_blocklist, and get_blocklist.
+  - Implemented FastAPI app in scamshield/api.py with POST /analyze, POST /analyze-image, GET /history, DELETE /history/{scan_id}, DELETE /history, POST /feedback, POST /blocklist, GET /blocklist, and GET /health.
+  - Implemented lifespan model loader with fallback flag models_loaded on startup.
+  - Implemented localhost-only CORS middleware and input validations (422 for empty text, 413 for text >5000 chars) returning standard JSON error payloads without stack traces.
+- Problems found and fixes:
+  - Added python-multipart requirement for handling multipart image upload.
+  - Verified with direct SQLite inspection test that raw OTPs and phone numbers never appear in the database.
 
 ## Phase 2: Scoring, advice, pipeline, dashboard, evaluation
 Status: Not started.

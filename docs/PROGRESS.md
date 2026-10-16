@@ -111,6 +111,7 @@ Status: In progress.
 - Problems found and fixes:
   - Added python-multipart requirement for handling multipart image upload.
   - Verified with direct SQLite inspection test that raw OTPs and phone numbers never appear in the database.
+  - Replaced deprecated 413 status constant with numeric HTTP status 413; full suite confirms the warning is gone.
 
 ## Phase 2: Scoring, advice, pipeline, dashboard, evaluation
 Status: In progress.
@@ -124,8 +125,9 @@ Status: In progress.
   - Added scoring and advice fixtures covering the requested boundaries, overrides, weight redistribution, disagreement, all scam types, action requirements, and report privacy.
 - Problems found and fixes:
   - The scoring call has no message metadata parameter, although confidence depends on message length and URLs. Added an optional Extracted argument while preserving the three-argument call form.
+  - Confidence thresholds: medium when text is below 15 words; low when text has 4 words or fewer, models disagree, or links are present without a reputation result.
   - Scheduled task from an earlier session has no active schedules recorded; removal or non-creation is undocumented. Recorded as an open issue; no schedule was changed in this task.
-- Commit: 91ee02a.
+- Commit: 842afb6.
 
 ## Phase 3: Integration and quality
 Status: Not started.

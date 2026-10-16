@@ -83,7 +83,7 @@ def _validate_text(text: Optional[str]) -> Optional[JSONResponse]:
         )
     if len(text) > 5000:
         return JSONResponse(
-            status_code=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE,
+            status_code=413,
             content={"error": "payload_too_large", "message": "Text exceeds maximum allowed length of 5000 characters."}
         )
     return None

@@ -1,0 +1,21 @@
+text,channel,label,scam_type,source
+We detected a login attempt from a new device. Reply with code 738204 now or access will be suspended.,sms,scam,OTP fraud,synthetic
+Your account verification expired. Confirm your identity at https://example.com/verify before today's cutoff.,sms,scam,Fake KYC or bank alert,synthetic
+A reward of Rs 250000 is reserved for you. Pay the release tax through example.com to receive it.,sms,scam,Lottery or prize,synthetic
+Remote data-entry vacancy approved. Send the onboarding deposit today to activate your employee ID.,sms,scam,Job offer,synthetic
+Delivery is paused because postage is unpaid. Settle the small fee at https://example.com/ship to reschedule.,sms,scam,Courier or parcel,synthetic
+I am sending you a refund. Approve the collect request in your UPI app and enter your PIN to receive it.,sms,scam,UPI payment request,synthetic
+Double your savings with our private token pool. Returns are guaranteed; join at example.com/fund.,sms,scam,Investment or crypto,synthetic
+This is the municipal office. Transfer the outstanding amount to this temporary account to avoid a penalty.,sms,scam,Impersonation,synthetic
+Card services notice: verify your customer profile at example.com/card or online purchases will stop.,sms,scam,Fake KYC or bank alert,synthetic
+A parcel addressed to you needs a customs payment before handover. Use this link: https://example.com/customs.,sms,scam,Courier or parcel,synthetic
+"A one-time code was requested for sign-in. OTP 482761. If this was not you, ignore this message.",sms,safe,Unclear,synthetic
+Your transfer of Rs 640 to Example Market is complete. The receipt is available in your banking app.,sms,safe,Unclear,synthetic
+The water bill is Rs 315 this month. You can view the statement at https://example.com/bill.,sms,safe,Unclear,synthetic
+Your clinic visit is booked for Friday at 2 PM. Reply to the clinic number if you need to reschedule.,sms,safe,Unclear,synthetic
+The monthly rent contribution is Rs 9000. I added the amount to our shared household spreadsheet.,sms,safe,Unclear,synthetic
+Package delivered to the building reception. Check with the desk during its posted opening hours.,sms,safe,Unclear,synthetic
+The bank's published interest rates are available at https://example.com/rates. This page does not request sign-in.,sms,safe,Unclear,synthetic
+Your deposit of Rs 500 was received by the community sports club. Thank you for supporting the event.,sms,safe,Unclear,synthetic
+Your password reset code is 190573. Do not share this code; support will never ask you to send it.,sms,safe,Unclear,synthetic
+"I have paid Rs 120 for the tickets. Please send your share whenever convenient, no rush.",sms,safe,Unclear,synthetic

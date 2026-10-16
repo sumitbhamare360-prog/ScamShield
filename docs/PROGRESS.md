@@ -199,6 +199,7 @@ Status: In progress.
 - Dashboard now presents uncertain scores of 55 or higher with the headline "Likely scam. The two models disagree, so verify before acting." Scores below 55 use "Verify manually. The two models disagree." The score and unchanged verdict category remain visible; other categories render as before.
 - Test count: 138 passing in the full suite; one third-party StarletteDeprecationWarning from FastAPI's test client.
 - Held-out set authored for separate review at `data/eval/heldout.csv`, 10 scam and 10 safe. Keep it out of tuning; use only for evaluation of a proposed change.
+- Pre-run independence check found held-out row 13 too close to a safe water-bill row in `check_set.csv`. The original `heldout.csv` remains frozen; `data/eval/heldout_v2.csv` replaces only that row and is the candidate for owner review (commit 45b57d5). No held-out evaluation has been run.
 - Dashboard presentation commit: dbb1b63.
 
 ## Phase 4: Website and launch gates

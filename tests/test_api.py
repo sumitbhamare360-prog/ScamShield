@@ -175,3 +175,45 @@ def test_blocklist_endpoints(client):
     res_get = client.get("/blocklist")
     assert res_get.status_code == 200
     assert "phish-bank.xyz" in res_get.json()
+
+
+def test_blocklist_accepts_url_kind(client):
+    url = "https://blocked.example/account"
+
+    response = client.post("/blocklist", json={"kind": "url", "value": url})
+
+    assert response.status_code == 200
+    assert url in client.get("/blocklist").json()
+
+
+@pytest.mark.parametrize("kind", ["dmain", "url "])
+def test_blocklist_rejects_unknown_kind(client, kind):
+    response = client.post("/blocklist", json={"kind": kind, "value": "blocked.example"})
+
+    assert response.status_code == 422
+    assert response.json() == {
+        "error": "invalid_blocklist_kind",
+        "message": "Kind must be one of: url, domain, phone.",
+    }
+
+
+def test_blocklisted_full_url_is_found_by_real_pipeline(client):
+    """Exercise storage, extraction, and the real pipeline with models as available."""
+    url = "https://blocked.example/verify"
+    add_response = client.post("/blocklist", json={"kind": "url", "value": url})
+    assert add_response.status_code == 200
+
+    response = client.post(
+        "/analyze",
+        json={
+            "text": f"Review your account using this page: {url}",
+            "channel": "sms",
+            "use_reputation": False,
+        },
+    )
+
+    assert response.status_code == 200
+    verdict = response.json()
+    link_check = verdict["checks"]["links"]
+    assert any(item["rule_id"] == "BLOCKLIST_HIT" for item in link_check["evidence"])
+    assert verdict["score"] >= 80

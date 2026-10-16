@@ -203,6 +203,14 @@ def submit_feedback(req: FeedbackRequest):
 
 @app.post("/blocklist")
 def add_to_blocklist(req: BlocklistRequest):
+    if req.kind not in {"url", "domain", "phone"}:
+        return JSONResponse(
+            status_code=422,
+            content={
+                "error": "invalid_blocklist_kind",
+                "message": "Kind must be one of: url, domain, phone.",
+            },
+        )
     store.add_blocklist(kind=req.kind, value=req.value)
     return {"status": "ok"}
 

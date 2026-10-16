@@ -163,6 +163,16 @@ Status: In progress.
 - Mock and live API checks: passed. API health reported models loaded; dashboard submission returned and displayed a live Verdict.
 - Commit: 64ba865.
 
+### Blocklist validation
+- Status: Complete at 2026-10-16.
+- Test count: 4 API tests added or expanded; 135 tests passing in the full suite.
+- Confirmed `store.get_blocklist()` returns a `Set[str]` of plain values, as required by `links.check`.
+- Added exact `kind` validation for `url`, `domain`, and `phone`; other values return 422 with the documented error and message fields.
+- Added a real-pipeline API test that stores a full URL, analyzes a message containing it, observes `BLOCKLIST_HIT`, and verifies the score is at least 80. Models were available, so neither `pipeline.analyze` nor its model scores were mocked.
+- The end-to-end test passed without changes to `links.py`; matching uses the stored full URL.
+- Remaining warning: third-party `StarletteDeprecationWarning` from FastAPI's `testclient.py:1` about `httpx` use.
+- Commit: pending progress-only follow-up.
+
 ## Phase 3: Integration and quality
 Status: Not started.
 - Quality list:

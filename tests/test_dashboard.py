@@ -40,7 +40,7 @@ def test_unreachable_service_uses_actionable_message(monkeypatch):
     assert str(error.value) == app.SERVICE_ERROR
 
 
-def test_url_blocklist_kind_matches_link_checker_value_handling():
+def test_blocklist_payload_value_is_matched_by_links_check():
     payload = app.blocklist_payload("offers.example", "domain")
     ext = Extracted(masked_text="review offer", urls=["https://offers.example/pay"])
     result = links.check(ext, use_reputation=False, blocklist={payload["value"]})

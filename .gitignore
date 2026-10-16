@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.env
+.env
+
+# Models
+/models/
+*.pt
+*.bin
+*.onnx
+
+# Data and SQLite
+data/*.db
+*.sqlite3
+*.db
+
+# Virtual Environment & IDE
+.venv/
+env/
+venv/
+.idea/
+.vscode/

@@ -1,10 +1,11 @@
 Synthetic check set of 40 messages. For sanity checking only. Not a published accuracy claim.
 
-Date: 2026-10-16
-Evaluation code revision (HEAD before this results commit): `5f8e846c6dce0066c0d30b0a7ff4bed4897f312f`
+Date: 2026-10-17
+Evaluation code revision (HEAD before this results commit): `a6ea1591c00c8624b0058858620ad7f3efc65a3b`
 Rows: 20 scam, 20 safe; all sources synthetic.
 
 All metrics use all 40 rows. Missing scores count as not scam and are listed separately. Suspicious band: 30 to below 55; scam-positive boundary: 55.
+Suspicious in the first two tables is a numeric score band; a user-facing verdict category may instead be Uncertain.
 
 ### Suspicious as not scam
 
@@ -23,6 +24,69 @@ All metrics use all 40 rows. Missing scores count as not scam and are listed sep
 | lstm | 0.700 | 0.667 | 0.800 | 0.727 | 40 |
 | rules | 0.900 | 0.944 | 0.850 | 0.895 | 40 |
 | full system | 0.700 | 0.654 | 0.850 | 0.739 | 40 |
+
+### Full system: Uncertain as its own outcome
+Uncertain rows are neither scam nor safe and are excluded. For included rows, Suspicious scores count as not scam.
+Uncertain rows: 11 total, 4 scam, 7 safe. Included rows: 29 of 40.
+
+| Configuration | Accuracy | Precision | Recall | F1 | Included rows |
+|---|---:|---:|---:|---:|---:|
+| full system | 0.793 | 0.778 | 0.875 | 0.824 | 29 |
+
+Verdict category by row:
+
+| Row | Actual label | Verdict category | Score | Uncertain |
+|---:|---|---|---:|---|
+| 1 | scam | High-Risk Scam | 83 | False |
+| 2 | scam | Uncertain: verify manually | 43 | True |
+| 3 | scam | Likely Scam | 73 | False |
+| 4 | scam | High-Risk Scam | 83 | False |
+| 5 | scam | Uncertain: verify manually | 16 | True |
+| 6 | scam | High-Risk Scam | 100 | False |
+| 7 | scam | High-Risk Scam | 80 | False |
+| 8 | scam | High-Risk Scam | 96 | False |
+| 9 | scam | Uncertain: verify manually | 75 | True |
+| 10 | scam | Likely Safe | 29 | False |
+| 11 | scam | Likely Scam | 78 | False |
+| 12 | scam | Likely Scam | 78 | False |
+| 13 | scam | High-Risk Scam | 100 | False |
+| 14 | scam | Likely Scam | 75 | False |
+| 15 | scam | Likely Safe | 21 | False |
+| 16 | scam | High-Risk Scam | 99 | False |
+| 17 | scam | High-Risk Scam | 82 | False |
+| 18 | scam | High-Risk Scam | 100 | False |
+| 19 | scam | High-Risk Scam | 80 | False |
+| 20 | scam | Uncertain: verify manually | 77 | True |
+| 21 | safe | Likely Safe | 0 | False |
+| 22 | safe | High-Risk Scam | 93 | False |
+| 23 | safe | Likely Safe | 0 | False |
+| 24 | safe | Likely Scam | 73 | False |
+| 25 | safe | Uncertain: verify manually | 13 | True |
+| 26 | safe | Likely Scam | 73 | False |
+| 27 | safe | Likely Safe | 13 | False |
+| 28 | safe | Uncertain: verify manually | 53 | True |
+| 29 | safe | Uncertain: verify manually | 51 | True |
+| 30 | safe | Uncertain: verify manually | 53 | True |
+| 31 | safe | Likely Safe | 0 | False |
+| 32 | safe | Uncertain: verify manually | 34 | True |
+| 33 | safe | Uncertain: verify manually | 18 | True |
+| 34 | safe | Likely Safe | 0 | False |
+| 35 | safe | Likely Scam | 73 | False |
+| 36 | safe | Likely Safe | 0 | False |
+| 37 | safe | Uncertain: verify manually | 38 | True |
+| 38 | safe | Likely Safe | 0 | False |
+| 39 | safe | Likely Safe | 13 | False |
+| 40 | safe | Likely Safe | 0 | False |
+
+Verdict category counts:
+
+| Verdict category | Rows |
+|---|---:|
+| Likely Safe | 11 |
+| Suspicious | 0 |
+| Likely Scam | 7 |
+| High-Risk Scam | 11 |
+| Uncertain: verify manually | 11 |
 
 Suspicious counts before reclassification:
 - transformer: 1 rows (37).

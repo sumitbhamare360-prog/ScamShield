@@ -13,6 +13,7 @@ __pycache__/
 
 # Data and SQLite
 data/*.db
+tests/*.db
 *.sqlite3
 *.db
 

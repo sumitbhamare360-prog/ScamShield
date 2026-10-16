@@ -1,0 +1,41 @@
+text,channel,label,scam_type,source
+Your bank account is blocked. Share your OTP now at https://secure-example.com,sms,scam,OTP fraud,synthetic
+Bank support bol raha hai OTP turant bhejo warna account band ho jayega,whatsapp,scam,OTP fraud,synthetic
+Your verification code is 735194. Tell it to our agent to stop account closure,sms,scam,OTP fraud,synthetic
+Complete KYC update immediately at https://kyc-example.com or your bank account will be suspended,sms,scam,Fake KYC or bank alert,synthetic
+PAN and Aadhaar KYC pending hai. Is link par details verify karo https://update-example.com,whatsapp,scam,Fake KYC or bank alert,synthetic
+RBI notice: your card is blocked. Install this app to restore banking access,sms,scam,Fake KYC or bank alert,synthetic
+"Congratulations, you won a Rs 50000 lottery prize. Pay a fee to claim at https://prize-example.com",sms,scam,Lottery or prize,synthetic
+You are the lucky draw winner. Claim your reward today by sending processing charges,whatsapp,scam,Lottery or prize,synthetic
+"Work from home job offer: earn daily, pay a registration fee to begin",whatsapp,scam,Job offer,synthetic
+Part-time job mila hai. Training fee jama karo aur guaranteed income pao,sms,scam,Job offer,synthetic
+Courier parcel is on hold. Pay customs fee at https://parcel-example.com to release it,sms,scam,Courier or parcel,synthetic
+Your package delivery failed. Update address and pay a small redelivery fee here https://ship-example.com,whatsapp,scam,Courier or parcel,synthetic
+Approve this UPI collect request and enter your PIN to receive the refund,sms,scam,UPI payment request,synthetic
+Please pay via UPI to confirm your booking. Scan this link https://pay-example.com,whatsapp,scam,UPI payment request,synthetic
+"Main UPI collect request bhej raha hoon, receive karne ke liye PIN enter karo",whatsapp,scam,UPI payment request,synthetic
+Invest Rs 10000 in crypto and get guaranteed returns every week,sms,scam,Investment or crypto,synthetic
+Double your money with this USDT investment plan. Join https://invest-example.com now,whatsapp,scam,Investment or crypto,synthetic
+Police digital arrest notice. Transfer funds now to avoid an arrest warrant,sms,scam,Impersonation,synthetic
+This is the bank security team. Your account is frozen; call our agent at https://help-example.com,whatsapp,scam,Impersonation,synthetic
+Income tax department final notice: pay the penalty today or face legal action,sms,scam,Impersonation,synthetic
+Your OTP for login is 482913. Do not share it with anyone.,sms,safe,none,synthetic
+Delivery update: your parcel is out for delivery today. Track it in the courier app,sms,safe,none,synthetic
+UPI payment received successfully from Alex for dinner. Thank you,whatsapp,safe,none,synthetic
+Reminder: your appointment is tomorrow at 10 AM. Reply if you need to reschedule,sms,safe,none,synthetic
+I sent you Rs 500 for the shared groceries yesterday,whatsapp,safe,none,synthetic
+Your monthly bank statement is ready in the official banking app,sms,safe,none,synthetic
+The team lunch contribution is Rs 250 per person. Please bring it tomorrow,whatsapp,safe,none,synthetic
+Your library book is due next Friday. Renew it in the library app if needed,sms,safe,none,synthetic
+Meeting moved to 3 PM in room 4. Please bring the project notes,whatsapp,safe,none,synthetic
+Your electricity bill payment was received. No action is needed,sms,safe,none,synthetic
+Thanks for returning the borrowed money. I will send the receipt later,whatsapp,safe,none,synthetic
+The train to Pune leaves at 6 PM. The ticket is saved in the railway app,sms,safe,none,synthetic
+Your medicine refill is ready for pickup at the clinic pharmacy,sms,safe,none,synthetic
+I found a good price for a used desk. We can split the cost if you want,whatsapp,safe,none,synthetic
+Your course enrollment is confirmed. Classes start on Monday,sms,safe,none,synthetic
+The water bill is due next week. I will pay it after work,whatsapp,safe,none,synthetic
+Your grocery order has been delivered to the front desk,sms,safe,none,synthetic
+We should save some money for the school trip next month,whatsapp,safe,none,synthetic
+The bank branch will open at 9:30 tomorrow because of maintenance,sms,safe,none,synthetic
+I paid the phone bill through the provider app. The confirmation is in my email,whatsapp,safe,none,synthetic

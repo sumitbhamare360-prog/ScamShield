@@ -116,7 +116,7 @@ Status: In progress.
   - Replaced deprecated 422 status constant with HTTP_422_UNPROCESSABLE_CONTENT; commit 5150565.
 
 ## Phase 2: Scoring, advice, pipeline, dashboard, evaluation
-Status: Complete at 2026-10-16; close-out commit e21cab9.
+Status: Complete at 2026-10-17; reporting close-out commit d476e8e.
 
 ### Scoring and advice
 - Status: Complete at 2026-10-16.
@@ -177,15 +177,17 @@ Status: Complete at 2026-10-16; close-out commit e21cab9.
 - Commit: ae7cf55.
 
 ### Evaluation harness
-- Status: Complete at 2026-10-16.
+- Status: Complete at 2026-10-17.
 - Test count: 135 tests passing in the full suite; one existing third-party StarletteDeprecationWarning from FastAPI's `testclient.py:1`.
-- Corrected comparison uses all 40 rows in both tables. Suspicious-as-not-scam: transformer accuracy/F1 0.700/0.727, LSTM 0.700/0.727, rules 0.900/0.895, full system 0.800/0.800. Suspicious-as-scam: transformer 0.675/0.711, LSTM 0.700/0.727, rules 0.900/0.895, full system 0.700/0.739. No scores were unavailable.
+- Corrected comparison uses all 40 rows in both numeric-band tables. Suspicious-as-not-scam: transformer accuracy/F1 0.700/0.727, LSTM 0.700/0.727, rules 0.900/0.895, full system 0.800/0.800. Suspicious-as-scam: transformer 0.675/0.711, LSTM 0.700/0.727, rules 0.900/0.895, full system 0.700/0.739. No scores were unavailable.
 - Rules-only outperformed the full system under both treatments. The earlier conclusion comparing different row sets is withdrawn. This set is synthetic and the rule phrases share its construction process, so the rules result is an upper bound, not evidence of generalization.
-- Full-system errors and masked examples are listed for both treatments in `eval/results.md`. With Suspicious treated as not scam, 1 of 4 false negatives were previously Suspicious. With Suspicious treated as scam, 5 of 9 false positives were previously Suspicious.
+- Full-system errors and masked examples are listed for both numeric-band treatments in `eval/results.md`. With Suspicious treated as not scam, 1 of 4 false negatives were previously in the Suspicious score band. With Suspicious treated as scam, 5 of 9 false positives were previously in the Suspicious score band.
+- Reporting correction: row 2 verdict category is `Uncertain: verify manually`; the first numeric-band table counted its score of 43 as its one Suspicious row. The report now records categories for every row, category totals, and an Uncertain-as-own-outcome table (11 uncertain rows, 4 scam and 7 safe; 29 included).
 - Diagnostic: row 2 fired `URGENT_BLOCK` (0.85), row 5 had no rule evidence, row 10 fired `JOB_FEE` (0.80), and row 15 fired `UPI_COLLECT` (0.80). The component table and weighted contributions were reported using masked text; rule scores of 80 on rows 10 and 15 were diluted below 55 by low model contributions, while row 5 is a rule-coverage gap.
 - Scoring weights were not tuned and remain unchanged: transformer 0.40, rules 0.20, LSTM 0.15, links 0.15, sender 0.10. Any weight change requires a separate held-out set.
-- Problems found and fixes: quoted and normalized CSV fields after validation found shifted columns and leading whitespace; fixed the dataset. Added the repository root to the runner import path after the direct command initially failed. Corrected the evaluator to count all 40 rows in both Suspicious treatments.
-- Phase 2 close-out commit: e21cab9.
+- Problems found and fixes: quoted and normalized CSV fields after validation found shifted columns and leading whitespace; fixed the dataset. Added the repository root to the runner import path after the direct command initially failed. Corrected the evaluator to count all 40 rows in both numeric Suspicious treatments and added category-aware reporting with `--show-row N`. The two existing numeric-band tables retain their prior metrics; the new Uncertain treatment excludes 11 rows and reports its 29-row denominator.
+- Full suite after reporting update: 135 passed; one third-party StarletteDeprecationWarning from FastAPI testclient.py.
+- Phase 2 reporting close-out commit: d476e8e.
 
 ## Phase 3: Integration and quality
 Status: In progress.

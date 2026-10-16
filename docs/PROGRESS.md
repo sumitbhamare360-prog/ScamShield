@@ -15,7 +15,7 @@
 ## Current status
 Phase: 3 (Integration and quality), in progress
 Next action: owner obtains and anonymizes 20 messages from a colleague who has not seen the rules or evaluation failures; resolve SCAMBERT and BiLSTM licence status. No fusion or weight changes before the independent set. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-17 at commit `e383199`.
+Last updated: 2026-10-17.
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -196,6 +196,8 @@ Status: In progress.
 - Quality list:
   - Validate model probabilities are within [0, 1] before constructing CheckResult scores.
   - README must cite the UCI SMS Spam Collection (Almeida and Gómez Hidalgo) under CC BY 4.0.
+  - BiLSTM (St3w31) licence remains unverified and independently blocks shipping.
+  - The Transformer currently has weight 0.40; replacing it changes every verdict. Defer a model swap and any fusion or weight decision until an independent Indian set exists.
 
 ### Uncertain verdict review and dashboard presentation
 - Analysis of the 40-row synthetic set is diagnostic only, not tuning evidence. Of 11 uncertain rows, 4 are scam and 7 are safe. Each standalone model is correct on 5 of 11 uncertain rows. The disagreement pattern is mixed: LSTM confident while transformer is not on rows 2, 5, 29, 33, and 37; transformer confident while LSTM is not on rows 9, 20, 28, and 30; rows 25 and 32 are moderate. No uncertain row scores at least 80; rows 9 and 20 score 55 to 79. Across all 40 rows, mean absolute disagreement is 0.245902, maximum is 0.999633, and 11 are above 0.4. This corrects the earlier hypothesis that LSTM is the main driver.
@@ -268,6 +270,13 @@ Status: Complete, 2026-10-17 at commit `4848507`.
 - OCR error-path correction committed as `Phase 3: OCR unavailable returns 503` at `e383199`.
 - Added `tests/test_ocr.py` with an always-run missing-binary check and a live OCR keyword check. Full suite: 144 passed, 0 skipped, one third-party Starlette test-client deprecation warning. Style check passed.
 - OCR is marked Complete because the keyword criterion and live endpoint privacy check passed. The generated screenshot was not committed.
+
+### Candidate model benchmark
+- Measurement only; no accuracy evaluation was run. Downloaded `omarash/sms-spam-distilbert` and `ealvaradob/bert-finetuned-phishing` into gitignored candidate directories without changing either production model.
+- `omarash/sms-spam-distilbert`: `{0: ham, 1: spam}`, 2 labels, positive spam index 1. Canonical probabilities, classes 0 and 1: `(0.015586, 0.984414)`, `(0.014156, 0.985844)`, `(0.998204, 0.001796)`, `(0.604594, 0.395406)`.
+- `ealvaradob/bert-finetuned-phishing`: `{0: benign, 1: phishing}`, 2 labels, phishing index 1. Canonical probabilities: `(0.000006, 0.999994)`, `(0.000005, 0.999995)`, `(0.999994, 0.000006)`, `(0.000416, 0.999584)`. The safe OTP canonical sentence is classified as phishing with high probability; four canonical checks do not establish a reliable scam mapping.
+- CPU per-message medians (three timed runs after a warm-up): SMS DistilBERT 22.63 ms at 40 words and 42.70 ms at 100 words; phishing BERT 150.38 ms and 318.27 ms. Process RSS before load / after load / after 50 inferences: SMS DistilBERT 415.8 / 702.7 / 707.6 MiB; phishing BERT 415.7 / 450.5 / 1612.7 MiB. Peak working set after load / after 50 inferences: 718.1 / 718.1 MiB and 450.5 / 1612.7 MiB, respectively.
+- Windows Python does not provide `resource`; memory was measured with `psutil` RSS and Windows `peak_wset` in a fresh process per model. Neither Hugging Face repository contains a separate LICENSE file; both metadata fields state `apache-2.0`. Preserve the license text and applicable notices before shipping. No model swap, production change, or accuracy evaluation was performed. Detailed probabilities and method are in `docs/LICENSES.md`.
 
 ## Phase 4: Website and launch gates
 Status: Not started. Launch gates: custom domain, favicon, remove platform badge, privacy policy, terms, and legal review.

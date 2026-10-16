@@ -29,11 +29,15 @@ def test_scam_vs_ham_discrimination():
 
     trans_spam = transformer.score(spam_text)
     trans_ham = transformer.score(ham_text)
+    assert trans_spam > 0.5
+    assert trans_ham < 0.5
     assert trans_spam > 0.8
     assert trans_ham < 0.2
 
     lstm_spam = lstm.score(spam_text)
     lstm_ham = lstm.score(ham_text)
+    assert lstm_spam > 0.5
+    assert lstm_ham < 0.5
     assert lstm_spam > 0.8
     assert lstm_ham < 0.2
 
@@ -76,13 +80,21 @@ def test_label_mapping_four_sentences():
     assert transformer.SCAM_CLASS_INDEX == 1
     assert lstm.SCAM_OUTPUT_STRUCTURE == "scalar_sigmoid"
 
-    # SCAMBERT checks
+    # SCAMBERT checks: scam > 0.5, safe < 0.5
+    assert transformer.score(scam_1) > 0.5
+    assert transformer.score(scam_2) > 0.5
+    assert transformer.score(safe_1) < 0.5
+    assert transformer.score(safe_2) < 0.5
     assert transformer.score(scam_1) > 0.99
     assert transformer.score(scam_2) > 0.99
     assert transformer.score(safe_1) < 0.01
     assert transformer.score(safe_2) < 0.05
 
-    # BiLSTM checks
+    # BiLSTM checks: scam > 0.5, safe < 0.5
+    assert lstm.score(scam_1) > 0.5
+    assert lstm.score(scam_2) > 0.5
+    assert lstm.score(safe_1) < 0.5
+    assert lstm.score(safe_2) < 0.5
     assert lstm.score(scam_1) > 0.99
     assert lstm.score(scam_2) > 0.99
     assert lstm.score(safe_1) < 0.001

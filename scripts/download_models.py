@@ -46,8 +46,12 @@ def download_bilstm():
             print(f"Already present: {f}")
 
     print("Verifying BiLSTM load...")
-    # Verify tokenizer (bert-base-uncased) and weights
-    tok = AutoTokenizer.from_pretrained("bert-base-uncased")
+    # Verify tokenizer (saved locally into models/bilstm) and weights
+    tok_config = os.path.join(BILSTM_DIR, "tokenizer_config.json")
+    if not os.path.exists(tok_config):
+        tok = AutoTokenizer.from_pretrained("bert-base-uncased")
+        tok.save_pretrained(BILSTM_DIR)
+    tok = AutoTokenizer.from_pretrained(BILSTM_DIR)
     from safetensors.torch import load_file
     with open(os.path.join(BILSTM_DIR, "config.json"), "r", encoding="utf-8") as f:
         cfg = json.load(f)

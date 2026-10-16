@@ -20,7 +20,7 @@ Last updated: 2026-10-16 at commit 08f56ad
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
 2. BiLSTM licence not verified (blocks shipping). Owner action: check the licence tag on the model page.
-3. Label mapping for SCAMBERT and BiLSTM verified (resolved). Four fixed sentences tested and recorded:
+3. Label mapping consistent with four test sentences; not verified on a broader set. Stays open until the 40-message evaluation runs. Four fixed sentences tested and recorded:
    - Sentence 1 (Scam): "Your account is blocked! Verify immediately with OTP. Send money to scam@ybl using https://scam.xyz/"
      * SCAMBERT (id2label generic {0: 'LABEL_0', 1: 'LABEL_1'}): Logits = [-4.4548, 4.1978], Probs = [0.000175, 0.999825]. Index 1 = scam.
      * BiLSTM (scalar logit under sigmoid): Logit = +6.904060, Prob P(scam) = 0.99899727. Positive logit = scam.
@@ -33,7 +33,7 @@ Last updated: 2026-10-16 at commit 08f56ad
    - Sentence 4 (Safe): "Your OTP for the login is 482913. Do not share it with anyone."
      * SCAMBERT: Logits = [1.5299, -1.7361], Probs = [0.963244, 0.036756]. Index 0 = safe.
      * BiLSTM: Logit = -9.061960, Prob P(scam) = 0.00011598. Negative logit = safe.
-   Resolution: SCAMBERT index 1 means scam (`SCAM_CLASS_INDEX = 1`). BiLSTM scalar positive logit under sigmoid means scam (`SCAM_OUTPUT_STRUCTURE = "scalar_sigmoid"`). Regression tests enforced in `tests/test_models.py`.
+   Observation: SCAMBERT index 1 means scam (`SCAM_CLASS_INDEX = 1`). BiLSTM scalar positive logit under sigmoid means scam (`SCAM_OUTPUT_STRUCTURE = "scalar_sigmoid"`). Regression tests enforced in `tests/test_models.py`.
 4. Peak memory measured for the whole process, not per model (does not block). Owner action: isolate process memory profiling per model component.
 5. Claim of verified MIT licenses in old log removed (resolved).
 

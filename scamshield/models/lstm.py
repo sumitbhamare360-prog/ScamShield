@@ -82,7 +82,10 @@ def _get_model():
             _MODEL.load_state_dict(state_dict)
 
         _MODEL.eval()
-        _TOKENIZER = BertTokenizer.from_pretrained("bert-base-uncased")
+        if os.path.exists(_MODEL_DIR) and os.path.exists(os.path.join(_MODEL_DIR, "tokenizer_config.json")):
+            _TOKENIZER = BertTokenizer.from_pretrained(_MODEL_DIR)
+        else:
+            _TOKENIZER = BertTokenizer.from_pretrained("bert-base-uncased")
 
     return _TOKENIZER, _MODEL
 

@@ -15,7 +15,7 @@
 ## Current status
 Phase: 2 (Scoring, advice, pipeline, dashboard, evaluation), in progress
 Next action: evaluation. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-16 (dashboard complete; commit pending)
+Last updated: 2026-10-16 at commit 64ba865
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -161,7 +161,7 @@ Status: In progress.
   - The first request-state implementation left form controls disabled after completion. Switched to a submit callback and explicit pending-state reset; confirmed controls disable during the request and re-enable afterward.
   - Full suite has one existing StarletteDeprecationWarning from FastAPI's `testclient.py:1` about `httpx` use. It is third-party and not actionable in this task.
 - Mock and live API checks: passed. API health reported models loaded; dashboard submission returned and displayed a live Verdict.
-- Commit: pending progress-only follow-up.
+- Commit: 64ba865.
 
 ## Phase 3: Integration and quality
 Status: Not started.

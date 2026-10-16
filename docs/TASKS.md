@@ -11,4 +11,4 @@
 | F | Agent-F | dashboard/app.py, dashboard/assets/ | Pending | Implements Streamlit interface connecting to API on localhost. | None |
 | H | Agent-H | data/eval/, tests/ | Pending | Implements evaluation metrics and test suites across datasets. | None |
 | I | Agent-I | scripts/ | Pending | Integration verification, smoke tests, and operational runner scripts. | None |
-| W | Agent-W | docs/ | Pending | Documentation, user guides, and web asset maintenance. | None |
+| W | Agent-W | website/ | Pending | Documentation, user guides, and web asset maintenance. | None |

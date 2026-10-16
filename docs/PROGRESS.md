@@ -13,9 +13,9 @@
 10. When a phase is finished, mark it Complete with the date and commit hash, then move the Current status pointer to the next phase.
 
 ## Current status
-Phase: 2 (Scoring, advice, pipeline, dashboard, evaluation), in progress
-Next action: evaluation. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-16 at commit ae7cf55
+Phase: 3 (Integration and quality), in progress
+Next action: Phase 3 integration and quality. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
+Last updated: 2026-10-16 at commit 2e93193
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -115,7 +115,7 @@ Status: In progress.
   - Replaced deprecated 422 status constant with HTTP_422_UNPROCESSABLE_CONTENT; commit 5150565.
 
 ## Phase 2: Scoring, advice, pipeline, dashboard, evaluation
-Status: In progress.
+Status: Complete at 2026-10-16; evaluation implementation commit 2e93193.
 
 ### Scoring and advice
 - Status: Complete at 2026-10-16.
@@ -170,11 +170,23 @@ Status: In progress.
 - Added exact `kind` validation for `url`, `domain`, and `phone`; other values return 422 with the documented error and message fields.
 - Added a real-pipeline API test that stores a full URL, analyzes a message containing it, observes `BLOCKLIST_HIT`, and verifies the score is at least 80. Models were available, so neither `pipeline.analyze` nor its model scores were mocked.
 - The end-to-end test passed without changes to `links.py`; matching uses the stored full URL.
+- API `kind` validation intentionally accepts only exact lowercase values. For example, `Domain ` is rejected even though direct store calls normalize it; the stricter API behavior avoids silently accepting inconsistent payloads.
+- Added `tests/*.db` to `.gitignore` so an interrupted API test cannot leave its temporary database eligible for commit.
 - Remaining warning: third-party `StarletteDeprecationWarning` from FastAPI's `testclient.py:1` about `httpx` use.
 - Commit: ae7cf55.
 
+### Evaluation harness
+- Status: Complete at 2026-10-16.
+- Test count: 135 tests passing in the full suite; one existing third-party StarletteDeprecationWarning from FastAPI's `testclient.py:1`.
+- Evaluated exactly 40 synthetic rows: 20 scam and 20 safe. Scoring weights were not tuned on this set.
+- Results: transformer accuracy 0.692 and F1 0.727; LSTM 0.700 and 0.727; rules 0.900 and 0.895; full system 0.794 and 0.821. Suspicious counts were 1, 0, 0, and 6 respectively; no scores were unavailable.
+- The full system was not worse than transformer-only on these development metrics. Its binary metrics include 34 rows versus 39 for transformer-only because Suspicious results are excluded. These synthetic results are for sanity checking only, not a published accuracy claim.
+- Problems found and fixes: quoted and normalized CSV fields after validation found shifted columns and leading whitespace; fixed the dataset. Added the repository root to the runner import path after the direct command initially failed. The final evaluation script completed successfully.
+- Weights used: transformer 0.40, rules 0.20, LSTM 0.15, links 0.15, sender 0.10.
+- Commit: 2e93193.
+
 ## Phase 3: Integration and quality
-Status: Not started.
+Status: In progress.
 - Quality list:
   - Validate model probabilities are within [0, 1] before constructing CheckResult scores.
 

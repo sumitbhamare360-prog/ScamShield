@@ -13,8 +13,8 @@
 10. When a phase is finished, mark it Complete with the date and commit hash, then move the Current status pointer to the next phase.
 
 ## Current status
-Phase: 1 (Core modules) complete; ready for Phase 2 (Scoring, advice, pipeline, dashboard, evaluation)
-Next action: Address Phase 2 development prerequisites (scoring fusion, advice generation, pipeline orchestrator) while maintaining Phase 1 shipping blockers (Issues 1-3).
+Phase: 2 (Scoring, advice, pipeline, dashboard, evaluation), in progress
+Next action: Scoring and advice. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
 Last updated: 2026-10-16 at commit 08f56ad
 
 ## Open issues
@@ -36,6 +36,8 @@ Last updated: 2026-10-16 at commit 08f56ad
    Observation: SCAMBERT index 1 means scam (`SCAM_CLASS_INDEX = 1`). BiLSTM scalar positive logit under sigmoid means scam (`SCAM_OUTPUT_STRUCTURE = "scalar_sigmoid"`). Regression tests enforced in `tests/test_models.py`.
 4. Peak memory measured for the whole process, not per model (does not block). Owner action: isolate process memory profiling per model component.
 5. Claim of verified MIT licenses in old log removed (resolved).
+6. Tokenizer for BiLSTM is bert-base-uncased, inferred, not confirmed. The St3w31 repo has no vocabulary file.
+7. Scheduled task from an earlier session: the record shows no active schedules, but the removal or non-creation is not documented. Note this in the Phase 2 entry.
 
 ## Phase 0: Scaffold and contracts
 Status: Complete at commit 48ac44d.
@@ -111,7 +113,19 @@ Status: In progress.
   - Verified with direct SQLite inspection test that raw OTPs and phone numbers never appear in the database.
 
 ## Phase 2: Scoring, advice, pipeline, dashboard, evaluation
-Status: Not started.
+Status: In progress.
+
+### Scoring and advice
+- Status: Complete.
+- Test count: 39 tests passing for scoring/advice; 113 tests passing in the full suite.
+- What was done:
+  - Implemented weighted scoring with available-check filtering and weight redistribution, model contributions, malicious reputation/blocklist overrides, configured score bands, disagreement detection, model agreement, and confidence notes.
+  - Implemented rule-first and masked-keyword scam classification, scam-specific remediation actions, required payment and reporting advice, and a safe-field-only report summary.
+  - Added scoring and advice fixtures covering the requested boundaries, overrides, weight redistribution, disagreement, all scam types, action requirements, and report privacy.
+- Problems found and fixes:
+  - The scoring call has no message metadata parameter, although confidence depends on message length and URLs. Added an optional Extracted argument while preserving the three-argument call form.
+  - Scheduled task from an earlier session has no active schedules recorded; removal or non-creation is undocumented. Recorded as an open issue; no schedule was changed in this task.
+- Commit: 91ee02a.
 
 ## Phase 3: Integration and quality
 Status: Not started.

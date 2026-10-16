@@ -13,9 +13,9 @@
 10. When a phase is finished, mark it Complete with the date and commit hash, then move the Current status pointer to the next phase.
 
 ## Current status
-Phase: 2 (Scoring, advice, pipeline, dashboard, evaluation), in progress
-Next action: evaluation. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
-Last updated: 2026-10-16 at commit 00b3c2e
+Phase: 3 (Integration and quality), in progress
+Next action: owner supplies the held-out set, then fusion review. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
+Last updated: 2026-10-16 at the Phase 2 evaluation close-out.
 
 ## Open issues
 1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
@@ -38,7 +38,7 @@ Last updated: 2026-10-16 at commit 00b3c2e
 5. Claim of verified MIT licenses in old log removed (resolved).
 6. Tokenizer for BiLSTM is bert-base-uncased, inferred, not confirmed. The St3w31 repo has no vocabulary file.
 7. Scheduled task from an earlier session: the record shows no active schedules, but the removal or non-creation is not documented. Note this in the Phase 2 entry.
-8. Full system is below rules-only on the synthetic set. Cause not known. Re-evaluate on independently written messages before changing any weight.
+8. Full system scores below rules-only on the 40-row synthetic set (rows 2, 5, 10, 15 diagnosed). Action: evaluate any change on a held-out set before changing weights, thresholds, or fusion.
 
 ## Phase 0: Scaffold and contracts
 Status: Complete at commit 48ac44d.
@@ -116,7 +116,7 @@ Status: In progress.
   - Replaced deprecated 422 status constant with HTTP_422_UNPROCESSABLE_CONTENT; commit 5150565.
 
 ## Phase 2: Scoring, advice, pipeline, dashboard, evaluation
-Status: In progress. Evaluation comparison is being corrected to use all 40 rows under both Suspicious treatments.
+Status: Complete at 2026-10-16; close-out commit to be recorded after commit.
 
 ### Scoring and advice
 - Status: Complete at 2026-10-16.
@@ -177,14 +177,15 @@ Status: In progress. Evaluation comparison is being corrected to use all 40 rows
 - Commit: ae7cf55.
 
 ### Evaluation harness
-- Status: In progress.
+- Status: Complete at 2026-10-16.
 - Test count: 135 tests passing in the full suite; one existing third-party StarletteDeprecationWarning from FastAPI's `testclient.py:1`.
 - Corrected comparison uses all 40 rows in both tables. Suspicious-as-not-scam: transformer accuracy/F1 0.700/0.727, LSTM 0.700/0.727, rules 0.900/0.895, full system 0.800/0.800. Suspicious-as-scam: transformer 0.675/0.711, LSTM 0.700/0.727, rules 0.900/0.895, full system 0.700/0.739. No scores were unavailable.
 - Rules-only outperformed the full system under both treatments. The earlier conclusion comparing different row sets is withdrawn. This set is synthetic and the rule phrases share its construction process, so the rules result is an upper bound, not evidence of generalization.
 - Full-system errors and masked examples are listed for both treatments in `eval/results.md`. With Suspicious treated as not scam, 1 of 4 false negatives were previously Suspicious. With Suspicious treated as scam, 5 of 9 false positives were previously Suspicious.
+- Diagnostic: row 2 fired `URGENT_BLOCK` (0.85), row 5 had no rule evidence, row 10 fired `JOB_FEE` (0.80), and row 15 fired `UPI_COLLECT` (0.80). The component table and weighted contributions were reported using masked text; rule scores of 80 on rows 10 and 15 were diluted below 55 by low model contributions, while row 5 is a rule-coverage gap.
 - Scoring weights were not tuned and remain unchanged: transformer 0.40, rules 0.20, LSTM 0.15, links 0.15, sender 0.10. Any weight change requires a separate held-out set.
 - Problems found and fixes: quoted and normalized CSV fields after validation found shifted columns and leading whitespace; fixed the dataset. Added the repository root to the runner import path after the direct command initially failed. Corrected the evaluator to count all 40 rows in both Suspicious treatments.
-- Corrected evaluator and results commit: 00b3c2e. Phase 2 remains open pending review of the same-denominator tables.
+- Phase 2 close-out commit: to be recorded after commit.
 
 ## Phase 3: Integration and quality
 Status: In progress.

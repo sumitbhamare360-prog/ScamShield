@@ -200,6 +200,8 @@ Status: In progress.
 - Test count: 138 passing in the full suite; one third-party StarletteDeprecationWarning from FastAPI's test client.
 - Held-out set authored for separate review at `data/eval/heldout.csv`, 10 scam and 10 safe. Keep it out of tuning; use only for evaluation of a proposed change.
 - Pre-run independence check found held-out row 13 too close to a safe water-bill row in `check_set.csv`. The original `heldout.csv` remains frozen; `data/eval/heldout_v2.csv` replaces only that row and is the candidate for owner review (commit 45b57d5). No held-out evaluation has been run.
+- Row replaced because its safe phrase overlapped check_set.csv row 37. Replacement chosen before any evaluation run.
+- Topic check found `heldout_v2.csv` row 13 is an intercity rail fare/receipt, while safe check_set.csv row 33 is a train journey with a ticket saved in the railway app. These are the same travel-ticket topic; heldout_v2.csv is not cleared for evaluation pending owner review.
 - Dashboard presentation commit: dbb1b63.
 
 ## Phase 4: Website and launch gates

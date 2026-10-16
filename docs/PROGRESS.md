@@ -112,6 +112,7 @@ Status: In progress.
   - Added python-multipart requirement for handling multipart image upload.
   - Verified with direct SQLite inspection test that raw OTPs and phone numbers never appear in the database.
   - Replaced deprecated 413 status constant with numeric HTTP status 413; full suite confirms the warning is gone.
+  - Replaced deprecated 422 status constant with HTTP_422_UNPROCESSABLE_CONTENT; commit 5150565.
 
 ## Phase 2: Scoring, advice, pipeline, dashboard, evaluation
 Status: In progress.
@@ -128,7 +129,8 @@ Status: In progress.
   - The scoring call has no message metadata parameter, although confidence depends on message length and URLs. Added an optional Extracted argument while preserving the three-argument call form.
   - Confidence thresholds: medium when text is below 15 words; low when text has 4 words or fewer, models disagree, or links are present without a reputation result.
   - Scheduled task from an earlier session has no active schedules recorded; removal or non-creation is undocumented. Recorded as an open issue; no schedule was changed in this task.
-  - Remaining warnings: StarletteDeprecationWarning from FastAPI's site-packages/fastapi/testclient.py:1 about httpx usage; StarletteDeprecationWarning at scamshield/api.py:99 for Starlette's deprecated HTTP_422_UNPROCESSABLE_ENTITY constant.
+  - Remaining warning: StarletteDeprecationWarning from FastAPI's site-packages/fastapi/testclient.py:1 about httpx usage.
+  - The FastAPI test client warning is third-party, not actionable; it originates from FastAPI's testclient.py and does not come from project code.
 - Commit: 74332bf.
 
 ## Phase 3: Integration and quality

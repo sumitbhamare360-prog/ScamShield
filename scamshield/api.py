@@ -78,7 +78,7 @@ class BlocklistRequest(BaseModel):
 def _validate_text(text: Optional[str]) -> Optional[JSONResponse]:
     if text is None or not text.strip():
         return JSONResponse(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
             content={"error": "unprocessable_entity", "message": "Text cannot be empty."}
         )
     if len(text) > 5000:

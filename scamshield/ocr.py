@@ -28,5 +28,5 @@ def extract_text(image_bytes: bytes) -> str:
         return text.strip()
     except pytesseract.TesseractNotFoundError:
         return "Error: Tesseract OCR engine is not installed or not found on system PATH."
-    except Exception as e:
-        return f"Error: OCR extraction failed: {str(e)}"
+    except Exception:
+        return "Error: OCR extraction failed."

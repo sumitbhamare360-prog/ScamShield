@@ -194,5 +194,12 @@ Status: In progress.
 - Quality list:
   - Validate model probabilities are within [0, 1] before constructing CheckResult scores.
 
+### Uncertain verdict review and dashboard presentation
+- Analysis of the 40-row synthetic set is diagnostic only, not tuning evidence. Of 11 uncertain rows, 4 are scam and 7 are safe. Each standalone model is correct on 5 of 11 uncertain rows. The disagreement pattern is mixed: LSTM confident while transformer is not on rows 2, 5, 29, 33, and 37; transformer confident while LSTM is not on rows 9, 20, 28, and 30; rows 25 and 32 are moderate. No uncertain row scores at least 80; rows 9 and 20 score 55 to 79. Across all 40 rows, mean absolute disagreement is 0.245902, maximum is 0.999633, and 11 are above 0.4. This corrects the earlier hypothesis that LSTM is the main driver.
+- Dashboard now presents uncertain scores of 55 or higher with the headline "Likely scam. The two models disagree, so verify before acting." Scores below 55 use "Verify manually. The two models disagree." The score and unchanged verdict category remain visible; other categories render as before.
+- Test count: 138 passing in the full suite; one third-party StarletteDeprecationWarning from FastAPI's test client.
+- Held-out set authored for separate review at `data/eval/heldout.csv`, 10 scam and 10 safe. Keep it out of tuning; use only for evaluation of a proposed change.
+- Dashboard presentation commit: dbb1b63.
+
 ## Phase 4: Website and launch gates
 Status: Not started. Launch gates: custom domain, favicon, remove platform badge, privacy policy, terms, and legal review.

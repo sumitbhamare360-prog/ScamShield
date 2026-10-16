@@ -82,7 +82,11 @@ def analyze(msg: Message, use_reputation: bool, blocklist: Set[str]) -> Verdict:
     if transformer_p is not None:
         try:
             # Explain only masked_text; never pass the raw message to highlight generation.
-            highlights = explain.highlights(transformer.score, masked_text)
+            highlights = explain.highlights(
+                transformer.score,
+                masked_text,
+                batch_score_fn=transformer.score_batch,
+            )
         except Exception:
             highlights = []
 

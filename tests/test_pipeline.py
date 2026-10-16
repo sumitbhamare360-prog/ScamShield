@@ -11,6 +11,7 @@ def mocked_checks(monkeypatch):
     ext = Extracted(masked_text="Your account needs review before access continues today, please verify through the official app when you have time.")
     monkeypatch.setattr(pipeline.preprocess, "extract", Mock(return_value=ext))
     monkeypatch.setattr(pipeline.transformer, "score", Mock(return_value=0.8))
+    monkeypatch.setattr(pipeline.transformer, "score_batch", Mock(side_effect=lambda texts: [0.5] * len(texts)))
     monkeypatch.setattr(pipeline.lstm, "score", Mock(return_value=0.7))
     monkeypatch.setattr(
         pipeline.rules,
@@ -125,11 +126,11 @@ def test_models_receive_only_masked_text(monkeypatch):
     raw_text = "Call me at 9876543210 and use OTP 482913 to verify your account."
     message = Message(text=raw_text, channel="sms")
     monkeypatch.setattr(pipeline.transformer, "score", Mock(return_value=0.8))
+    monkeypatch.setattr(pipeline.transformer, "score_batch", Mock(side_effect=lambda texts: [0.5] * len(texts)))
     monkeypatch.setattr(pipeline.lstm, "score", Mock(return_value=0.7))
     monkeypatch.setattr(pipeline.rules, "run", Mock(return_value=CheckResult(name="rules", score=0, weight=0.2, status="ok")))
     monkeypatch.setattr(pipeline.links, "check", Mock(return_value=CheckResult(name="links", score=0, weight=0.15, status="ok")))
     monkeypatch.setattr(pipeline.sender, "check", Mock(return_value=CheckResult(name="sender", score=0, weight=0.1, status="ok")))
-    monkeypatch.setattr(pipeline.explain, "highlights", Mock(return_value=[]))
     extracted = pipeline.preprocess.extract(message)
     monkeypatch.setattr(pipeline.preprocess, "extract", Mock(return_value=extracted))
 
@@ -140,6 +141,9 @@ def test_models_receive_only_masked_text(monkeypatch):
         assert received_texts
         assert all("9876543210" not in text and "482913" not in text for text in received_texts)
         assert all(text == extracted.masked_text for text in received_texts)
+    batch_texts = pipeline.transformer.score_batch.call_args.args[0]
+    assert batch_texts
+    assert all("9876543210" not in text and "482913" not in text for text in batch_texts)
 
 
 def test_use_reputation_false_passes_through_unchanged(mocked_checks, monkeypatch):

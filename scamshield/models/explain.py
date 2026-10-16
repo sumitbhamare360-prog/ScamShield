@@ -2,7 +2,11 @@ import re
 from typing import Callable, List, Dict, Any
 
 
-def highlights(score_fn: Callable[[str], float], text: str) -> List[Dict[str, Any]]:
+def highlights(
+    score_fn: Callable[[str], float],
+    text: str,
+    batch_score_fn: Callable[[List[str]], List[float]] | None = None,
+) -> List[Dict[str, Any]]:
     """Word-level perturbation explainer.
 
     Splits text into words, removes each word one at a time, and measures the score drop.
@@ -25,10 +29,10 @@ def highlights(score_fn: Callable[[str], float], text: str) -> List[Dict[str, An
     if not word_matches:
         return []
 
-    drops = []
+    variants = []
+    matches = []
     for match in word_matches:
         start, end = match.start(), match.end()
-        word = match.group(0)
 
         # Build text without this word
         left = text[:start].rstrip()
@@ -38,7 +42,19 @@ def highlights(score_fn: Callable[[str], float], text: str) -> List[Dict[str, An
         else:
             perturbed_text = left or right
 
-        perturbed_score = score_fn(perturbed_text)
+        matches.append(match)
+        variants.append(perturbed_text)
+
+    perturbed_scores = (
+        batch_score_fn(variants)
+        if batch_score_fn is not None
+        else [score_fn(variant) for variant in variants]
+    )
+
+    drops = []
+    for match, perturbed_score in zip(matches, perturbed_scores):
+        start, end = match.start(), match.end()
+        word = match.group(0)
         drop = baseline_score - perturbed_score
 
         if drop > 0.05:

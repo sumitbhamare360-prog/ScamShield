@@ -17,6 +17,18 @@ def test_transformer_score_range():
         assert 0.0 <= sc <= 1.0
 
 
+def test_transformer_score_batch_matches_individual_scores():
+    scores = transformer.score_batch(SAMPLES)
+
+    assert len(scores) == len(SAMPLES)
+    for batch_score, text in zip(scores, SAMPLES):
+        assert batch_score == pytest.approx(transformer.score(text), abs=1e-4)
+
+
+def test_transformer_score_batch_preserves_empty_text_scores():
+    assert transformer.score_batch(["", "  "]) == [0.0, 0.0]
+
+
 def test_lstm_score_range():
     for text in SAMPLES:
         sc = lstm.score(text)
@@ -68,6 +80,43 @@ def test_explainer_with_custom_score_fn():
     assert len(hl) == 1
     assert hl[0]["text"] == "danger"
     assert sample[hl[0]["start"]:hl[0]["end"]] == "danger"
+
+
+def test_explainer_batch_keeps_fixed_score_output_and_calls_batch_once():
+    weights = {"warning": 0.3, "urgent": 0.2, "account": 0.1}
+
+    def fake_score(text: str) -> float:
+        return 0.1 + sum(weight for word, weight in weights.items() if word in text)
+
+    batch_calls = []
+
+    def fake_batch(texts):
+        batch_calls.append(texts)
+        return [fake_score(text) for text in texts]
+
+    sample = "alpha warning urgent account"
+    result = highlights(fake_score, sample, batch_score_fn=fake_batch)
+
+    assert result == [
+        {"text": "warning", "start": 6, "end": 13, "weight": 0.3},
+        {"text": "urgent", "start": 14, "end": 20, "weight": 0.2},
+        {"text": "account", "start": 21, "end": 28, "weight": 0.1},
+    ]
+    assert len(batch_calls) == 1
+    assert len(batch_calls[0]) == len(sample.split())
+
+
+def test_explainer_fallback_scores_each_variant_individually():
+    calls = []
+
+    def fake_score(text: str) -> float:
+        calls.append(text)
+        return 0.9 if "danger" in text else 0.1
+
+    result = highlights(fake_score, "This is a danger situation")
+
+    assert result[0]["text"] == "danger"
+    assert len(calls) == 1 + len("This is a danger situation".split())
 
 
 def test_label_mapping_four_sentences():

@@ -226,5 +226,12 @@ Status: In progress.
 - No rules, weights, thresholds, or fusion changes were made. The UCI result is secondary; an independent owner-supplied set is still required before any fusion changes.
 - Results commit: 99a80f5.
 
+### Batched highlight scoring
+- Added `transformer.score_batch(texts)` using one padded model forward pass and optional batched scoring in `explain.highlights`; the single-text scorer and per-word explanation fallback remain available. Pipeline highlights still receive masked text only.
+- Latency was measured end-to-end with real, warmed models and `use_reputation=False`, on the same synthetic messages before and after batching. Each figure is the median of three timed runs after a warm-up call. For 40 words: 979.2 ms before (runs 979.2, 952.5, 986.3 ms), 581.3 ms after (592.4, 581.3, 578.8 ms). For 100 words: 4,575.4 ms before (4,407.6, 4,701.1, 4,575.4 ms), 3,156.1 ms after (3,156.1, 3,142.9, 3,168.7 ms).
+- The 40-word target of under 1,500 ms is met. The 100-word target of under 3,000 ms is missed; record 3,156.1 ms and stop this optimization task without changing model scores, weights, or thresholds.
+- Added tests comparing batched and individual transformer probabilities on five samples within 1e-4, checking fixed-score explanation output and fallback behavior, and checking masked text reaches batch scoring.
+- Full test suite: 142 passed; one third-party StarletteDeprecationWarning from FastAPI's test client.
+
 ## Phase 4: Website and launch gates
 Status: Not started. Launch gates: custom domain, favicon, remove platform badge, privacy policy, terms, and legal review.

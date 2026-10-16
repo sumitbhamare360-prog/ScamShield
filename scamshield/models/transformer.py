@@ -52,3 +52,30 @@ def score(text: str) -> float:
         scam_prob = probs[0, SCAM_CLASS_INDEX].item()
 
     return float(scam_prob)
+
+
+def score_batch(texts: list[str]) -> list[float]:
+    """Predict P(scam) for each text in one padded model batch."""
+    if not texts:
+        return []
+
+    scores = [0.0] * len(texts)
+    nonempty = [(index, text) for index, text in enumerate(texts) if text and text.strip()]
+    if not nonempty:
+        return scores
+
+    tokenizer, model = _get_model()
+    inputs = tokenizer(
+        [text for _, text in nonempty],
+        return_tensors="pt",
+        truncation=True,
+        max_length=256,
+        padding=True,
+    )
+    with torch.no_grad():
+        logits = model(**inputs).logits
+        probs = torch.softmax(logits, dim=-1)[:, SCAM_CLASS_INDEX]
+
+    for (index, _), probability in zip(nonempty, probs.tolist()):
+        scores[index] = float(probability)
+    return scores

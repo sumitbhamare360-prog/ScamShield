@@ -281,7 +281,7 @@ Status: Complete, 2026-10-17 at commit `4848507`.
 - Windows Python does not provide `resource`; memory was measured with `psutil` RSS and Windows `peak_wset` in a fresh process per model. Neither Hugging Face repository contains a separate LICENSE file; both metadata fields state `apache-2.0`. Preserve the license text and applicable notices before shipping. No model swap, production change, or accuracy evaluation was performed. Detailed probabilities and method are in `docs/LICENSES.md`.
 
 ### Production per-model memory profile
-Status: Complete, 2026-10-17. Measurement only. No model, weight, threshold, or fusion setting was changed.
+Status: Complete, 2026-10-17, at commits `edebd81` (profiler) and `b79cd8b` (log entries). Measurement only. No model, weight, threshold, or fusion setting was changed.
 
 - Added `scripts/profile_model_memory.py` to profile the two production models, `models/scambert` (SCAMBERT) and `models/bilstm` (BiLSTM). The candidate models are out of scope. The script lives outside the `scamshield` package, is committed, and is not used at runtime. It requires `psutil`, which is a development-only dependency listed in `requirements-dev.txt` and deliberately kept out of the production `requirements.txt`.
 - Method matches the candidate benchmark in `docs/LICENSES.md` so the figures are comparable: one fresh Python process per model, RSS from `psutil.Process().memory_info().rss`, and the Windows high-water working set `peak_wset`, in MiB rounded to one decimal. Runtime: Python 3.14.3, torch 2.10.0+cpu, transformers 5.17.0, 8 torch threads, `torch.no_grad()` inside `score()`. Both models loaded from their local snapshots, with no Hub download.

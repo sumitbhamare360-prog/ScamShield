@@ -40,7 +40,8 @@ Last updated: 2026-10-17.
 7. Scheduled task from an earlier session: the record shows no active schedules, but the removal or non-creation is not documented. Note this in the Phase 2 entry.
 8. Full system scores below rules-only on the 40-row synthetic set (rows 2, 5, 10, 15 diagnosed). Action: evaluate any change on a held-out set before changing weights, thresholds, or fusion.
 9. No independent held-out set. Owner will obtain 20 messages from a colleague who has not seen the rules or evaluation failures, then anonymize and label them before adding them to the repo or sharing them in prompts. Until then, no fusion, rule, or weight changes.
-10. RESOLVED 2026-10-17: combined serving process memory is now measured, not estimated. The single process that holds both models peaks at 752.4 MiB with 739.2 MiB resident, reproducing at 751.7 MiB on a repeat run. The earlier arithmetic estimate of about 765 MiB was close but was not a measurement and has been replaced. See the "Production per-model memory profile" entry in Phase 3. Note that the 800 MiB figure is a team threshold from our own candidate work, not a platform requirement, and a breach would be an owner decision about the host rather than a reason for a silent model change.
+10. RESOLVED 2026-10-17 for memory only: combined serving process memory is now measured, not estimated. The single process that holds both models peaks at 752.4 MiB with 739.2 MiB resident, reproducing at 751.7 MiB on a repeat run. The earlier arithmetic estimate of about 765 MiB was close but was not a measurement and has been replaced. See the "Production per-model memory profile" entry in Phase 3. This closure covers memory at rest and under a single sequential inference loop only. It says nothing about latency under concurrent requests, which is tracked separately as Open issue 11. Note that the 800 MiB figure is a team threshold from our own candidate work, not a platform requirement, and a breach would be an owner decision about the host rather than a reason for a silent model change.
+11. The API has not been load-tested. All memory figures come from single fresh processes running one sequential inference loop, so latency and memory under concurrent requests are unknown. Does not block. Action: load-test the API under concurrent requests and record latency percentiles and memory under load. Owner approval needed before adding load-test tooling.
 
 ## Phase 0: Scaffold and contracts
 Status: Complete at commit 48ac44d.
@@ -305,7 +306,7 @@ Combined process, the figure a user receives, one fresh process holding both mod
 | After BiLSTM first inference | 737.7 / 752.4 | +31.4 / +45.0 |
 | After 50 inferences of each | 739.2 / 752.4 | +1.5 / +0.0 |
 
-The combined peak is **752.4 MiB**, with 739.2 MiB resident after 50 inferences of each model. A repeat full run gave 751.7 MiB peak and 738.8 MiB resident, so the combined figure reproduces within 1 MiB.
+The combined peak is **752.4 MiB**, with 739.2 MiB resident after 50 inferences of each model. A repeat full run gave 751.7 MiB peak and 738.8 MiB resident, so the combined figure reproduces within 1 MiB. Both models are held in one process, so this is below the 800 MiB team threshold. The measurement is a single sequential inference loop in one process, not concurrent load; see Open issue 11.
 
 | Model | 40-word median latency (ms) | 100-word median latency (ms) |
 |---|---:|---:|

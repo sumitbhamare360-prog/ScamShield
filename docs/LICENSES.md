@@ -44,3 +44,17 @@ Last checked: 2026-10-17. Measurement only; no accuracy evaluation was run. Both
 Canonical inputs were the four fixed label-mapping sentences already listed in the Phase 1 evaluation record. The phishing candidate maps class 1 to `phishing`, not scam. It assigns class 1 probability 0.999584 to the canonical safe OTP sentence, so this four-sentence check does not establish a reliable scam mapping. The SMS candidate maps class 1 to `spam`; that is a spam label, not the product's scam definition. No accuracy or generalization claim follows from these checks.
 
 Memory method: the requested Python `resource` module is unavailable in this Windows runtime. RSS values use `psutil.Process().memory_info().rss`; the peak column uses Windows `peak_wset`, the high-water working-set equivalent. Values are process RSS in MiB rounded to one decimal. The phishing candidate's working set grows sharply during inference; its 1.34 GB checkpoint size understates runtime memory needs. The compact candidate is substantially faster in this CPU benchmark. Both candidates are English-focused, and neither result establishes Hinglish or Indian scam coverage. No production model was changed or selected.
+
+#### Memory investigation
+
+Measured 2026-10-17 in three separate fresh CPU processes, each loading `ealvaradob/bert-finetuned-phishing` from its local candidate snapshot and running 500 inferences on the same synthetic 40-word input. The tokenizer was called for each inference, matching the production wrapper's per-call tokenization pattern. RSS is MiB from `psutil`; the initial reading is after model load and before inference. Each checkpoint records RSS after the next 50 inferences and `gc.collect()`.
+
+| Execution mode | 0 | 50 | 100 | 150 | 200 | 250 | 300 | 350 | 400 | 450 | 500 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Default grad mode | 450.5 | 1679.4 | 1688.3 | 1688.3 | 1688.3 | 1688.3 | 1688.2 | 1688.3 | 1688.3 | 1688.3 | 1688.3 |
+| `torch.inference_mode()` | 450.5 | 1615.3 | 1615.3 | 1615.3 | 1615.3 | 1615.3 | 1615.3 | 1615.3 | 1615.3 | 1615.3 | 1615.3 |
+| `torch.no_grad()` | 450.2 | 1599.4 | 1599.5 | 1599.5 | 1599.5 | 1599.5 | 1599.5 | 1599.5 | 1599.5 | 1599.5 | 1599.5 |
+
+`gc.collect()` returned 0 collected objects at every checkpoint. RSS did not fall after collection; the `no_grad` reading rose from 1588.3 MiB immediately before collection at 50 to 1599.4 MiB after it, then plateaued. Growth is not linear: most of the increase happens during the first 50 calls and each mode is essentially flat from 100 through 500. Thus there is no evidence of an ongoing per-inference leak in this loop, but the plateau is above 800 MiB in all modes and is not acceptable for the stated criterion. `inference_mode()` did not avoid the large working-set increase.
+
+Production code inspection: `scamshield/models/transformer.py` lines 31-54 tokenize separately on each `score()` call, then run the forward pass under `torch.no_grad()` at lines 47-48. `score_batch()` also tokenizes its supplied texts each call at lines 67-74 and uses `torch.no_grad()` at lines 75-76. It does not reuse tokenized tensors across calls. No code was changed and no accuracy evaluation was run.

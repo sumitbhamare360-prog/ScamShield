@@ -14,7 +14,7 @@
 
 ## Current status
 Phase: 3 (Integration and quality), in progress
-Next action: owner obtains and anonymizes 20 messages from a colleague who has not seen the rules or evaluation failures; resolve SCAMBERT and BiLSTM licence status. No fusion or weight changes before the independent set. Phase 1 open items 1, 2, 3, and 4 remain open; items 1 and 2 block shipping only.
+Next action: owner obtains and anonymizes 20 messages from a colleague who has not seen the rules or evaluation failures; resolve SCAMBERT and BiLSTM licence status. No fusion or weight changes before the independent set. Phase 1 open items 1, 2, and 3 remain open, and item 4 is resolved; items 1 and 2 block shipping only.
 Last updated: 2026-10-17.
 
 ## Open issues
@@ -34,12 +34,13 @@ Last updated: 2026-10-17.
      * SCAMBERT: Logits = [1.5299, -1.7361], Probs = [0.963244, 0.036756]. Index 0 = safe.
      * BiLSTM: Logit = -9.061960, Prob P(scam) = 0.00011598. Negative logit = safe.
    Observation: SCAMBERT index 1 means scam (`SCAM_CLASS_INDEX = 1`). BiLSTM scalar positive logit under sigmoid means scam (`SCAM_OUTPUT_STRUCTURE = "scalar_sigmoid"`). Regression tests enforced in `tests/test_models.py`.
-4. Peak memory measured for the whole process, not per model (does not block). Owner action: isolate process memory profiling per model component.
+4. RESOLVED 2026-10-17: memory is now measured per model component. See the "Production per-model memory profile" entry in Phase 3. SCAMBERT peak 716.1 MiB and BiLSTM peak 288.5 MiB, both below the 800 MiB criterion, with load dominating on both and no per-inference growth over 50 inferences. The residual combined-process figure moved to item 10.
 5. Claim of verified MIT licenses in old log removed (resolved).
 6. Tokenizer for BiLSTM is bert-base-uncased, inferred, not confirmed. The St3w31 repo has no vocabulary file.
 7. Scheduled task from an earlier session: the record shows no active schedules, but the removal or non-creation is not documented. Note this in the Phase 2 entry.
 8. Full system scores below rules-only on the 40-row synthetic set (rows 2, 5, 10, 15 diagnosed). Action: evaluate any change on a held-out set before changing weights, thresholds, or fusion.
 9. No independent held-out set. Owner will obtain 20 messages from a colleague who has not seen the rules or evaluation failures, then anonymize and label them before adding them to the repo or sharing them in prompts. Until then, no fusion, rule, or weight changes.
+10. RESOLVED 2026-10-17: combined serving process memory is now measured, not estimated. The single process that holds both models peaks at 752.4 MiB with 739.2 MiB resident, reproducing at 751.7 MiB on a repeat run. The earlier arithmetic estimate of about 765 MiB was close but was not a measurement and has been replaced. See the "Production per-model memory profile" entry in Phase 3. Note that the 800 MiB figure is a team threshold from our own candidate work, not a platform requirement, and a breach would be an owner decision about the host rather than a reason for a silent model change.
 
 ## Phase 0: Scaffold and contracts
 Status: Complete at commit 48ac44d.
@@ -277,6 +278,54 @@ Status: Complete, 2026-10-17 at commit `4848507`.
 - `ealvaradob/bert-finetuned-phishing`: `{0: benign, 1: phishing}`, 2 labels, phishing index 1. Canonical probabilities: `(0.000006, 0.999994)`, `(0.000005, 0.999995)`, `(0.999994, 0.000006)`, `(0.000416, 0.999584)`. The safe OTP canonical sentence is classified as phishing with high probability; four canonical checks do not establish a reliable scam mapping.
 - CPU per-message medians (three timed runs after a warm-up): SMS DistilBERT 22.63 ms at 40 words and 42.70 ms at 100 words; phishing BERT 150.38 ms and 318.27 ms. Process RSS before load / after load / after 50 inferences: SMS DistilBERT 415.8 / 702.7 / 707.6 MiB; phishing BERT 415.7 / 450.5 / 1612.7 MiB. Peak working set after load / after 50 inferences: 718.1 / 718.1 MiB and 450.5 / 1612.7 MiB, respectively.
 - Windows Python does not provide `resource`; memory was measured with `psutil` RSS and Windows `peak_wset` in a fresh process per model. Neither Hugging Face repository contains a separate LICENSE file; both metadata fields state `apache-2.0`. Preserve the license text and applicable notices before shipping. No model swap, production change, or accuracy evaluation was performed. Detailed probabilities and method are in `docs/LICENSES.md`.
+
+### Production per-model memory profile
+Status: Complete, 2026-10-17. Measurement only. No model, weight, threshold, or fusion setting was changed.
+
+- Added `scripts/profile_model_memory.py` to profile the two production models, `models/scambert` (SCAMBERT) and `models/bilstm` (BiLSTM). The candidate models are out of scope. The script lives outside the `scamshield` package, is committed, and is not used at runtime. It requires `psutil`, which is a development-only dependency listed in `requirements-dev.txt` and deliberately kept out of the production `requirements.txt`.
+- Method matches the candidate benchmark in `docs/LICENSES.md` so the figures are comparable: one fresh Python process per model, RSS from `psutil.Process().memory_info().rss`, and the Windows high-water working set `peak_wset`, in MiB rounded to one decimal. Runtime: Python 3.14.3, torch 2.10.0+cpu, transformers 5.17.0, 8 torch threads, `torch.no_grad()` inside `score()`. Both models loaded from their local snapshots, with no Hub download.
+- Load path: `scamshield.models.transformer.score` and `scamshield.models.lstm.score`, each of which calls the module `_get_model()` lazy singleton builder on first use. Because the first production call performs load and inference together, "after load" is ambiguous, so both readings are reported.
+- `peak_wset` is a per-process high water mark that never decreases, so the growth between consecutive readings is the meaningful figure. Cells are `rss / peak` in MiB with peak growth in brackets.
+- Three modes per model plus one combined process: `staged` calls `_get_model()` and measures it with no inference yet, then measures the first `score()` separately; `first-call` preloads nothing, so one `score()` performs load and inference together, which is the production first-request path; `combined` imports both model modules in one fresh process, loads and runs one inference on each, and records peak after each. The API holds both models in a single process, so the combined figure is what a user actually receives.
+- Inputs are fixed synthetic strings of the repeated placeholder word `message` at 40 and 100 words. No real message text is used, printed, or stored.
+
+| Model | Mode | Baseline after imports | Load, singleton built | First inference | After 50 inferences |
+|---|---|---:|---:|---:|---:|
+| SCAMBERT | staged | 413.2 / 413.2 | 700.4 / 706.9 (+287.2 / +293.7) | 705.7 / 706.9 (+5.3 / +0.0) | 709.1 / 709.1 (+3.4 / +2.2) |
+| SCAMBERT | first-call | 414.4 / 414.4 | 705.8 / 716.1 (+291.4 / +301.7) combined | n/a | 705.9 / 716.1 (+0.1 / +0.0) |
+| BiLSTM | staged | 237.8 / 237.8 | 269.6 / 286.4 (+31.8 / +48.6) | 273.5 / 286.4 (+3.9 / +0.0) | 275.0 / 286.4 (+1.5 / +0.0) |
+| BiLSTM | first-call | 238.3 / 238.3 | 275.3 / 288.5 (+37.0 / +50.2) combined | n/a | 275.3 / 288.5 (+0.0 / +0.0) |
+
+Combined process, the figure a user receives, one fresh process holding both models, transformer loaded first:
+
+| Stage | rss / peak (MiB) | Growth since previous |
+|---|---:|---:|
+| Baseline after importing both modules | 414.8 / 414.8 | n/a |
+| After SCAMBERT first inference | 706.3 / 707.4 | +291.5 / +292.6 |
+| After BiLSTM first inference | 737.7 / 752.4 | +31.4 / +45.0 |
+| After 50 inferences of each | 739.2 / 752.4 | +1.5 / +0.0 |
+
+The combined peak is **752.4 MiB**, with 739.2 MiB resident after 50 inferences of each model. A repeat full run gave 751.7 MiB peak and 738.8 MiB resident, so the combined figure reproduces within 1 MiB.
+
+| Model | 40-word median latency (ms) | 100-word median latency (ms) |
+|---|---:|---:|
+| SCAMBERT | 20.26 | 46.02 |
+| BiLSTM | 2.72 | 3.93 |
+
+Latency uses one warm-up and three timed runs, medians shown, tokenization included, measured in the staged run only. Latency is a repeatability check, not the objective: a repeat single-model run gave BiLSTM 1.91 ms and 3.75 ms, so treat the short-message figures as indicative.
+
+Findings:
+1. Load dominates memory on both production models. Peak working set is reached when the weights load, before any inference. The first inference adds 0.0 peak for both models.
+2. No per-inference growth over 50 inferences. SCAMBERT adds 2.2 MiB peak, BiLSTM adds 0.0, and the combined process adds 0.0.
+3. The combined serving process peaks at **752.4 MiB** with 739.2 MiB resident, which is the figure that matters for the product, since the API holds both models in one process. It is below the 800 MiB criterion by 47.6 MiB.
+4. The combined figure is well below the sum of the two separate peaks, 716.1 plus 288.5 equals 1004.6 MiB, because the transformers import is paid once in a combined process rather than once per model. The combined baseline of 414.8 MiB matches the transformer-only baseline of 413.2 MiB, not the sum of the two baselines, which confirms that shared cost.
+5. Both production models are also individually below the 800 MiB criterion: SCAMBERT peak 716.1 MiB and BiLSTM peak 288.5 MiB. SCAMBERT has about 84 MiB of headroom, so it is inside the limit but not comfortable on its own.
+6. Caveat on the criterion: the 800 MiB threshold is a team threshold taken from our own candidate benchmark work, not a platform requirement. It is also not purely a model measure, because roughly 176 MiB of the SCAMBERT figure is fixed transformers import cost rather than model weight. That import cost does not make the model lighter or heavier; it means the criterion is being applied to a process figure that includes library overhead. If a combined figure ever exceeds the threshold, the response is an owner decision about the host, such as host sizing or process limits, and never a silent model change.
+7. The import baseline differs by module: 413.2 MiB for `transformer` against 237.8 MiB for `lstm`, because `transformer.py` imports `AutoTokenizer` and `AutoModelForSequenceClassification` while `lstm.py` imports only `BertTokenizer`.
+8. The load ambiguity is small but real. Staged "after load" peak is 706.9 against first-call 716.1 for SCAMBERT, and 286.4 against 288.5 for BiLSTM. Use the staged figure as the per-model peak and the first-call figure as the production first-request path. Run-to-run variation on these peaks is a few MiB, and the transformer first-call peak ranged from 707.5 to 716.1 across two runs, so single-run differences under about 10 MiB are not meaningful.
+9. SCAMBERT latency of 20.26 ms at 40 words and 46.02 ms at 100 words is in line with the compact `omarash/sms-spam-distilbert` candidate at 22.63 ms and 42.70 ms recorded in `docs/LICENSES.md`, so that swap offers no latency gain.
+10. The synthetic repeated-token inputs are out of distribution, so the first-score values, 0.749855 for SCAMBERT and 0.999947 for BiLSTM, are recorded only to confirm the measured path executed. They are not accuracy evidence.
+11. Style check passed. Full suite: 147 passed, 0 skipped, one third-party Starlette test-client deprecation warning. The profiler is measurement tooling and adds no test.
 
 ## Phase 4: Website and launch gates
 Status: Not started. Launch gates: custom domain, favicon, remove platform badge, privacy policy, terms, and legal review.

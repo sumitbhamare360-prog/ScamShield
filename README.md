@@ -60,6 +60,17 @@ python -m pytest tests/
 python scripts/style_check.py
 ```
 
+## Memory profile
+
+Measurement only. Needs the development-only dependency:
+
+```bash
+pip install -r requirements-dev.txt
+python scripts/profile_model_memory.py
+```
+
+One fresh process per model, plus a combined process that holds both models. Figures are recorded in `docs/PROGRESS.md`.
+
 ## Evaluation
 
 Run the synthetic check set with:

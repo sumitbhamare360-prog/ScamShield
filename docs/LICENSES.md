@@ -43,6 +43,8 @@ Last checked: 2026-10-17. Measurement only; no accuracy evaluation was run. Both
 
 Canonical inputs were the four fixed label-mapping sentences already listed in the Phase 1 evaluation record. The phishing candidate maps class 1 to `phishing`, not scam. It assigns class 1 probability 0.999584 to the canonical safe OTP sentence, so this four-sentence check does not establish a reliable scam mapping. The SMS candidate maps class 1 to `spam`; that is a spam label, not the product's scam definition. No accuracy or generalization claim follows from these checks.
 
+Production per-model figures for comparison are recorded in `docs/PROGRESS.md` under "Production per-model memory profile": SCAMBERT peak 716.1 MiB and BiLSTM peak 288.5 MiB, with an import baseline of 413.2 MiB before any weight load, and load dominating on both. The combined process that holds both models, which is what the user actually receives, peaks at 752.4 MiB with 739.2 MiB resident. The transformers import is paid once in that combined process, so its figure is well below the sum of the two separate peaks.
+
 Memory method: the requested Python `resource` module is unavailable in this Windows runtime. RSS values use `psutil.Process().memory_info().rss`; the peak column uses Windows `peak_wset`, the high-water working-set equivalent. Values are process RSS in MiB rounded to one decimal. The phishing candidate's working set grows sharply during inference; its 1.34 GB checkpoint size understates runtime memory needs. The compact candidate is substantially faster in this CPU benchmark. Both candidates are English-focused, and neither result establishes Hinglish or Indian scam coverage. No production model was changed or selected.
 
 #### Memory investigation

@@ -1,0 +1,4 @@
+# Development-only dependencies. Not required to run ScamShield.
+# Install with: pip install -r requirements-dev.txt
+# Used by: scripts/profile_model_memory.py
+psutil>=5.9.0

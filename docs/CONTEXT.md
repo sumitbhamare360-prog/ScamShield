@@ -163,7 +163,7 @@ Scoring API: `fuse(checks, lstm_p, transformer_p, ext=None)`. `ext` is an option
 - Download Models: `python scripts/download_models.py`
 
 ## 9. Known limitations
-- SCAMBERT and BiLSTM model licensing status is unconfirmed for production distribution.
+- SCAMBERT licensing is unconfirmed and blocks shipping. BiLSTM is identified as MIT via card metadata, and any distributed build must carry the MIT text and the copyright notice in a THIRD_PARTY_NOTICES file.
 - English and Hinglish patterns are supported; broader regional languages are pending.
 - OCR requires external Tesseract binary installed on the host system PATH.
 - Reputation checks use Google Safe Browsing (only when GSB_API_KEY is set) and URLhaus; both can fail, in which case the result is "not_checked".

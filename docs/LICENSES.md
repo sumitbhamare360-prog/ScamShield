@@ -5,7 +5,7 @@ Status is as of the last check. Do not ship any model marked UNCONFIRMED.
 | Model | Source | Licence | Status | Notes |
 |---|---|---|---|---|
 | Digvijay05/SCAMBERT | Hugging Face | Not stated | UNCONFIRMED: do not ship | Model card says "MIT (or your project's license)", which is a template phrase, not a grant. No license field in the YAML header. Contact the author for written permission or a clear licence. |
-| St3w31/BiLSTMSpamClassifier | Hugging Face | Not verified | UNCONFIRMED: do not ship | Licence tag not confirmed from the model page. Verify before shipping. Model repo provides no vocab.txt or tokenizer.json; uses bert-base-uncased (Apache 2.0) for tokenization. Output mapping was inferred through testing rather than explicitly declared. |
+| St3w31/BiLSTMSpamClassifier | Hugging Face | MIT (card metadata `license:mit`) | Licence identified 2026-10-17; notice obligation open, not a blocker | MIT permits commercial use and redistribution. No LICENSE file in the repository, so the distributed build must take the MIT text from the MIT template and the copyright holder from the author's profile, and must carry both in a THIRD_PARTY_NOTICES file. The card declares bert-base-uncased for tokenization only and that the encoder is not BERT; no vocab.txt or tokenizer.json in the repo. Output is a logit requiring torch.sigmoid, and the card does not say which sign means spam, so the label mapping stays inferred through testing. Trained on the full UCI SMS Spam Collection, so it is contaminated for UCI evaluation. |
 
 ## Model Candidate Audit
 

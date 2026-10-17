@@ -18,7 +18,7 @@ Next action: owner obtains and anonymizes 20 messages from a colleague who has n
 Last updated: 2026-10-17.
 
 ## Open issues
-1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement.
+1. SCAMBERT licence UNCONFIRMED (blocks shipping). Owner action: confirm or obtain written permission from the author, or choose a licensed replacement. Licence request drafted 2026-10-17, not yet sent; the sent date is to be recorded here once the owner sends it. Publisher re-verified 2026-10-17 against the Hub API: `Digvijay05/SCAMBERT` resolves to `ThunderCrown/SCAMBERT`, one repository renamed rather than two parties, with `author` ThunderCrown, no `license:` field in the card metadata, no licence tag, and no LICENSE file. The owner must answer the redistribution question before sending, because the release path decides whether a redistribution grant is needed or download at install time is enough.
 2. BiLSTM licence not verified (blocks shipping). Owner action: check the licence tag on the model page.
 3. Label mapping consistent with four test sentences; not verified on a broader set. Stays open until the 40-message evaluation runs. Four fixed sentences tested and recorded:
    - Sentence 1 (Scam): "Your account is blocked! Verify immediately with OTP. Send money to scam@ybl using https://scam.xyz/"
